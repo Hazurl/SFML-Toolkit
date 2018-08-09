@@ -21,6 +21,7 @@ struct KeyPressed {
 ### Details
 
 Here's the list of events:
+
 | Sfml event type `sf::Event::Event::Type::` | Sfml event `sf::Event::` | Custom event type `sfmltk::event::` |
 | --- | --- | --- |
 | `Closed` | --- | `Closed` |
