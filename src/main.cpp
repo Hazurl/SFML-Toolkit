@@ -8,7 +8,7 @@
 struct KeyPressedListener : sfmltk::EventListener {
     sfmltk::PropagateEvent on_key_pressed(sfmltk::event::KeyPressed const& k) override {
         std::cout << "Pressed `" << k.code << "`\n";
-        // if it returns false, the event will not get propagated to other listener
+        // if it returns false, the event will not get propagated to other listeners
         return true;
     }
 };
@@ -16,9 +16,9 @@ struct KeyPressedListener : sfmltk::EventListener {
 int main() {
     KeyPressedListener key_listener;
 
-    // Listener accept any invocable object
+    // Listener accept any invocable objects
     sfmltk::Listener closer(
-        // Works with any invocable object
+        // Works with any invocable objects
 
         [] (sfmltk::event::Closed const& c) { 
             c.window.close();
@@ -37,7 +37,7 @@ int main() {
             return false;
         },
         [] (sfmltk::event::KeyReleased const&) {
-            // never executed because the above function will stop the propagation (aka it `return false`)
+            // never executed because the above function will stop the propagation (aka it returns `false`)
             std::cout << "Closer's lambda C\n";
             return false;
         },
@@ -47,7 +47,7 @@ int main() {
             return true;
         }
     ); 
-    // You can have as many listeners queue as you wants
+    // You can have as many list of listener as you wants
     // Just call sfmltk::EventListener::dispatch_all on each of them
     std::initializer_list<sfmltk::EventListener*> listeners = {
         &key_listener, // higher priority at the top
@@ -58,9 +58,9 @@ int main() {
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event))
-            // sfmltk::EventListener::dispatch_all is equivalent of calling
-            // sfmltk::EventListener::dispatch on each listener if the previous returns true
-            sfmltk::EventListener::dispatch_all(window, event, std::begin(listeners), std::end(listeners));
+            // sfmltk::dispatch_all is equivalent of calling
+            // sfmltk::dispatch on each listener if the previous returns true
+            sfmltk::dispatch_all(window, event, std::begin(listeners), std::end(listeners));
 
         window.clear();
         window.display();

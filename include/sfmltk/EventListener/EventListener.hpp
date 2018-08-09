@@ -8,12 +8,14 @@ namespace sfmltk {
 
 using PropagateEvent = bool;
 
+class EventListener;
+
+template<typename Iterator>
+bool dispatch_all(sf::Window& window, sf::Event const& event, Iterator const& begin, Iterator const& end);
+bool dispatch(sf::Window& window, sf::Event const& event, EventListener& listener);
+
 class EventListener {
 public:
-
-    template<typename Iterator>
-    static bool dispatch_all(sf::Window& window, sf::Event const& event, Iterator const& begin, Iterator const& end);
-    static bool dispatch(sf::Window& window, sf::Event const& event, EventListener& listener);
 
     virtual PropagateEvent on_close(event::Closed const& /* closed */) { return true; }
     virtual PropagateEvent on_resize(event::Resized const& /* resized */) { return true; }
@@ -41,7 +43,7 @@ public:
 };
 
 template<typename Iterator>
-bool EventListener::dispatch_all(sf::Window& window, sf::Event const& event, Iterator const& begin, Iterator const& end) {
+bool dispatch_all(sf::Window& window, sf::Event const& event, Iterator const& begin, Iterator const& end) {
     switch (event.type) {
         case sf::Event::Closed: 
             return std::all_of(begin, end, [&window] (auto& listener) {
