@@ -3,6 +3,13 @@
 This system is design to dispath events to objects that need them. 
 It aims for simplicity and fast implementation.
 
+**Summary**
+- [Events](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Events/EventListener.md#events)
+- [EventListener](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Events/EventListener.md#eventlistener)
+- [Listener](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Events/EventListener.md#listener)
+- [Dispatcher](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Events/EventListener.md#dispatcher)
+- [Example](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Events/EventListener.md#example)
+
 ## Events
 
 Each sfml's events has a new type associated with it. It contains the associated data and a reference to the `sf::Window` where the events is from.
