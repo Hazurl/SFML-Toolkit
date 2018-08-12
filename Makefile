@@ -73,9 +73,26 @@ header-of = $(1:%$(EXT_SRC_FILE)=%$(EXT_INC_FILE))
 # Relative to $(SRC_FOLDER)
 SRC_EXCLUDE_FILE := 
 # All files that are not use for libraries, don't add src/
-SRC_MAINS := main.cpp
+EXAMPLES := $(shell find $(SRC_FOLDER)/example -name '*$(EXT_SRC_FILE)')
+SRC_MAINS := main.cpp $(EXAMPLES:$(SRC_FOLDER)/%=%)
 # The main file to use (must be in $(SRC_MAINS))
 SRC_MAIN := main.cpp
+
+#####
+##### MODULES
+#####
+
+EVENT_SRC := sftk/EventListener/EventListener.cpp
+EVENT_MAIN := example/eventListener.cpp
+
+TARGET_EVENT_EXE :=$(BUILD_EXE_FOLDER)/eventListener_example.cpp
+TARGET_EVENT_SHARED :=$(BUILD_SHARED_FOLDER)/libeventListener_example.so
+TARGET_EVENT_STATIC :=$(BUILD_STATIC_FOLDER)/libeventListener_example.a
+
+EVENT_OBJ_MAIN := $(EVENT_MAIN:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o)
+EVENT_OBJ_EXE := $(EVENT_OBJ_MAIN) $(EVENT_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o) 
+EVENT_OBJ_SHARED := $(EVENT_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FOLDER)/%.o)
+EVENT_OBJ_STATIC := $(EVENT_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
 
 #####
 ##### FLAGS
@@ -186,7 +203,7 @@ _SRC_FILES := $(filter-out $(_SRC_MAINS),$(_ALL_SRC_FILES))
 # All sources file directories
 _SRC_DIR := $(sort $(dir $(_ALL_SRC_FILES)))
 
-_EXE_DIR := $(addprefix $(BUILD_EXE_FOLDER)/,$(_SRC_DIR))
+_EXE_DIR := $(addprefix $(BUILD_EXE_FOLDER)/,$(_SRC_DIR)) 
 _SHARED_DIR := $(addprefix $(BUILD_SHARED_FOLDER)/,$(_SRC_DIR))
 _STATIC_DIR := $(addprefix $(BUILD_STATIC_FOLDER)/,$(_SRC_DIR))
 
@@ -303,6 +320,24 @@ re-valgrind:
 	@make re-executable
 	@make valgrind
 
+eventlistener:
+	@$(call _header,BUILDING EVENT LISTENER EXAMPLE...)
+	@make $(TARGET_EVENT_EXE)
+
+eventlistener-shared:
+	@$(call _header,BUILDING SHARED EVENT LISTENER...)
+	@make $(TARGET_EVENT_SHARED)
+
+eventlistener-static:
+	@$(call _header,BUILDING STATIC EVENT LISTENER...)
+	@make $(TARGET_EVENT_STATIC)
+
+run-eventlistener: 
+	@make eventlistener
+	@echo
+	@$(call _special,EXECUTING $(TARGET_EVENT_EXE)...)
+	@$(TARGET_EVENT_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
+
 $(_BUILD_DIR):
 	@mkdir -p $(_BUILD_DIR)
 
@@ -343,6 +378,25 @@ $(TARGET_EXE): $(_BUILD_DIR) $(LIB_TO_BUILD) $(_OBJ_SRC_EXE)
 $(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o: $(SRC_FOLDER)/%$(EXT_SRC_FILE) $(INC_FOLDER)/$(call header-of,%$(EXT_SRC_FILE))
 	@$(call _build-msg,$(notdir $@),$(call _join,$(_comma)$(_space),$(strip $(notdir $< $(wildcard $(word 2,$^))))))
 	@$(CXX) -c $(INC_FLAG) $(FLAGS) -o "$@" "$<"
+
+
+###
+
+
+$(TARGET_EVENT_EXE): $(_BUILD_DIR) $(LIB_TO_BUILD) $(EVENT_OBJ_EXE)
+	@$(call _sub-header,Linking...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) $(EVENT_OBJ_EXE) -o "$@" $(LIBS_PATH) $(LIBS)
+	@$(call _header,Executable done ($(EVENT_OBJ_EXE)))
+
+$(TARGET_EVENT_STATIC): $(_BUILD_DIR) $(LIB_TO_BUILD) $(EVENT_OBJ_STATIC)
+	@$(call _sub-header,Archiving...)
+	@$(SXX) $(STATIC_LINK_FLAG) $(TARGET_EVENT_STATIC) $(EVENT_OBJ_STATIC)
+	@$(call _header,Static library done ($(TARGET_EVENT_STATIC)))
+
+$(TARGET_EVENT_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(EVENT_OBJ_SHARED)
+	@$(call _sub-header,Shared library creation...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_EVENT_SHARED) $(EVENT_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
+	@$(call _header,Shared library done ($(TARGET_EVENT_SHARED)))
 
 
 # Just to avoid file without headers

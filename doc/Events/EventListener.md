@@ -124,6 +124,8 @@ Both functions returns if the propagation get stopped.
 
 ## Example
 
+[Source](https://github.com/Hazurl/SFML-Toolkit/blob/master/src/example/eventListener.cpp)
+
 ```cpp
 #include <SFML/Graphics.hpp>
 #include <iostream>
