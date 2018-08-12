@@ -1,12 +1,12 @@
 #include <SFML/Graphics.hpp>
 
-#include <sfmltk/EventListener/EventListener.hpp>
-#include <sfmltk/EventListener/Listener.hpp>
+#include <sftk/EventListener/EventListener.hpp>
+#include <sftk/EventListener/Listener.hpp>
 
 #include <iostream>
 
-struct KeyPressedListener : sfmltk::EventListener {
-    sfmltk::PropagateEvent on_key_pressed(sfmltk::event::KeyPressed const& k) override {
+struct KeyPressedListener : sftk::EventListener {
+    sftk::PropagateEvent on_key_pressed(sftk::event::KeyPressed const& k) override {
         std::cout << "Pressed `" << k.code << "`\n";
         // if it returns false, the event will not get propagated to other listeners
         return true;
@@ -17,26 +17,26 @@ int main() {
     KeyPressedListener key_listener;
 
     // Listener accept any invocable objects
-    sfmltk::Listener closer(
+    sftk::Listener closer(
         // Works with any invocable objects
 
-        [] (sfmltk::event::Closed const& c) { 
+        [] (sftk::event::Closed const& c) { 
             c.window.close();
             return false; 
         },
 
-        [] (sfmltk::event::KeyReleased const& k) {
+        [] (sftk::event::KeyReleased const& k) {
             std::cout << "Closer's lambda A\n";
             if (k.code == sf::Keyboard::Key::Escape)
                 return k.window.close(), false;
             return true;
         },
-        [] (sfmltk::event::KeyReleased const&) {
+        [] (sftk::event::KeyReleased const&) {
             // only executed if the the key is not Escape, since the above function will stop the propagation if that's the case
             std::cout << "Closer's lambda B\n";
             return false;
         },
-        [] (sfmltk::event::KeyReleased const&) {
+        [] (sftk::event::KeyReleased const&) {
             // never executed because the above function will stop the propagation (aka it returns `false`)
             std::cout << "Closer's lambda C\n";
             return false;
@@ -48,8 +48,8 @@ int main() {
         }
     ); 
     // You can have as many list of listener as you wants
-    // Just call sfmltk::EventListener::dispatch_all on each of them
-    std::initializer_list<sfmltk::EventListener*> listeners = {
+    // Just call sftk::EventListener::dispatch_all on each of them
+    std::initializer_list<sftk::EventListener*> listeners = {
         &key_listener, // higher priority at the top
         &closer
     };
@@ -58,9 +58,9 @@ int main() {
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event))
-            // sfmltk::dispatch_all is equivalent of calling
-            // sfmltk::dispatch on each listener if the previous returns true
-            sfmltk::dispatch_all(window, event, std::begin(listeners), std::end(listeners));
+            // sftk::dispatch_all is equivalent of calling
+            // sftk::dispatch on each listener if the previous returns true
+            sftk::dispatch_all(window, event, std::begin(listeners), std::end(listeners));
 
         window.clear();
         window.display();

@@ -1,6 +1,6 @@
-#include <sfmltk/EventListener/EventListener.hpp>
+#include <sftk/EventListener/EventListener.hpp>
 
-namespace sfmltk {
+namespace sftk {
 
 PropagateEvent dispatch(sf::Window& window, sf::Event const& event, EventListener& listener) {
     auto list = { &listener };

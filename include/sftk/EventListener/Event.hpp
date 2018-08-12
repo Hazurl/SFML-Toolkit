@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace sfmltk {
+namespace sftk {
 namespace event {
 
 #define MAKE_EVENT(name)\

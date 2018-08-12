@@ -2,9 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <sfmltk/EventListener/Event.hpp>
+#include <sftk/EventListener/Event.hpp>
 
-namespace sfmltk {
+namespace sftk {
 
 using PropagateEvent = bool;
 

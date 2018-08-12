@@ -14,7 +14,7 @@ It aims for simplicity and fast implementation.
 
 Each sfml's events has a new type associated with it. It contains the associated data and a reference to the `sf::Window` where the events is from.
 
-For example, the event `sf::Event::EventType::KeyPressed` is associated with `sf::Event::KeyEvent`. His new type become `sfmltk::event::KeyPressed` containing the same data as `sf::Event::KeyEvent` as weel as a reference to the window.
+For example, the event `sf::Event::EventType::KeyPressed` is associated with `sf::Event::KeyEvent`. His new type become `sftk::event::KeyPressed` containing the same data as `sf::Event::KeyEvent` as weel as a reference to the window.
 
 ```cpp
 struct KeyPressed {
@@ -29,7 +29,7 @@ struct KeyPressed {
 
 Here's the list of events:
 
-| Sfml event type `sf::Event::Event::Type::` | Sfml event `sf::Event::` | Custom event type `sfmltk::event::` |
+| Sfml event type `sf::Event::Event::Type::` | Sfml event `sf::Event::` | Custom event type `sftk::event::` |
 | --- | --- | --- |
 | `Closed` | --- | `Closed` |
 | `Resized` | `SizeEvent` | `Resized` |
@@ -54,14 +54,14 @@ Here's the list of events:
 | `TouchEnded` | `TouchEvent` | `TouchEnded` |
 | `SensorChanged` | `SensorEvent` | `SensorChanged` |
 
-> **Warning**: `sf::Event::EventType::MouseWheelMoved` is deprecated so it has no associated type in `sfmltk::event`
+> **Warning**: `sf::Event::EventType::MouseWheelMoved` is deprecated so it has no associated type in `sftk::event`
 
 ## EventListener
 
-`sfmltk::EventListener` is the interface you need to satisfy to works with this system.
+`sftk::EventListener` is the interface you need to satisfy to works with this system.
 The basic implementation is... nothing, since all methods have a default implementation.
 
-Each methods from this interface looks like `sfmltk::PropagateEvent on_event_name(sfmltk::event::event_data const&);` where `event_name` refers to the name of the `sf::Event::EventType` in snake_case and `event_data` to his associated custom type.
+Each methods from this interface looks like `sftk::PropagateEvent on_event_name(sftk::event::event_data const&);` where `event_name` refers to the name of the `sf::Event::EventType` in snake_case and `event_data` to his associated custom type.
 
 `PropagateEvent` is an alias of `bool`, if the methods returns `true`, the event will continue his propagation to the other listeners, if `false` then it stop without notifying the other listeners.
 
@@ -93,15 +93,15 @@ Here's the list of methods you can override:
 
 ## Listener
 
-`sfmltk::Listener` is an helper class that wrap any number of invocable objects into an `sfmltk::EventListener`. Like:
+`sftk::Listener` is an helper class that wrap any number of invocable objects into an `sftk::EventListener`. Like:
 ```cpp
-sfmltk::Listener closer(
-    [] (sfmltk::event::Closed const& c) { 
+sftk::Listener closer(
+    [] (sftk::event::Closed const& c) { 
         c.window.close();
         return false; 
     },
 
-    [] (sfmltk::event::KeyReleased const& k) {
+    [] (sftk::event::KeyReleased const& k) {
         if (k.code == sf::Keyboard::Key::Escape) {
             k.window.close();
             return false;
@@ -118,7 +118,7 @@ Two methods are used to dispath an event to all listeners (until propagation sto
 - `template<class It> PropagateEvent dispatch_all(sf::Window& window, sf::Event const& event, It const& begin, It const& end)`
 - `PropagateEvent dispatch(sf::Window& window, sf::Event const& event, EventListener const& listener)`
 
-The first one takes a range between iterators `[begin, end)` and call the methods associated with the event. If the propagation stop, the remaining listener do not get notified. They are called in order. The dereferencing iterators must returns a pointer (or any object with `operator->`) to a `sfmltk::EventListener` and not a reference.
+The first one takes a range between iterators `[begin, end)` and call the methods associated with the event. If the propagation stop, the remaining listener do not get notified. They are called in order. The dereferencing iterators must returns a pointer (or any object with `operator->`) to a `sftk::EventListener` and not a reference.
 The second function is an easy-of-use for single elements.
 Both functions returns if the propagation get stopped.
 
@@ -128,11 +128,11 @@ Both functions returns if the propagation get stopped.
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include <sfmltk/EventListener/EventListener.hpp>
-#include <sfmltk/EventListener/Listener.hpp>
+#include <sftk/EventListener/EventListener.hpp>
+#include <sftk/EventListener/Listener.hpp>
 
-struct KeyPressedListener : sfmltk::EventListener {
-    sfmltk::PropagateEvent on_key_pressed(sfmltk::event::KeyPressed const& k) override {
+struct KeyPressedListener : sftk::EventListener {
+    sftk::PropagateEvent on_key_pressed(sftk::event::KeyPressed const& k) override {
         std::cout << "Pressed `" << k.code << "`\n";
         // if it returns false, the event will not get propagated to other listeners
         return true;
@@ -143,26 +143,26 @@ int main() {
     KeyPressedListener key_listener;
 
     // Listener accept any invocable objects
-    sfmltk::Listener closer(
+    sftk::Listener closer(
         // Works with any invocable objects
 
-        [] (sfmltk::event::Closed const& c) { 
+        [] (sftk::event::Closed const& c) { 
             c.window.close();
             return false; 
         },
 
-        [] (sfmltk::event::KeyReleased const& k) {
+        [] (sftk::event::KeyReleased const& k) {
             std::cout << "Closer's lambda A\n";
             if (k.code == sf::Keyboard::Key::Escape)
                 return k.window.close(), false;
             return true;
         },
-        [] (sfmltk::event::KeyReleased const&) {
+        [] (sftk::event::KeyReleased const&) {
             // only executed if the the key is not Escape, since the above function will stop the propagation if that's the case
             std::cout << "Closer's lambda B\n";
             return false;
         },
-        [] (sfmltk::event::KeyReleased const&) {
+        [] (sftk::event::KeyReleased const&) {
             // never executed because the above function will stop the propagation (aka it returns `false`)
             std::cout << "Closer's lambda C\n";
             return false;
@@ -174,8 +174,8 @@ int main() {
         }
     ); 
     // You can have as many list of listener as you wants
-    // Just call sfmltk::EventListener::dispatch_all on each of them
-    std::initializer_list<sfmltk::EventListener*> listeners = {
+    // Just call sftk::EventListener::dispatch_all on each of them
+    std::initializer_list<sftk::EventListener*> listeners = {
         &key_listener, // higher priority at the top
         &closer
     };
@@ -184,9 +184,9 @@ int main() {
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event))
-            // sfmltk::dispatch_all is equivalent of calling
-            // sfmltk::dispatch on each listener if the previous returns true
-            sfmltk::dispatch_all(window, event, std::begin(listeners), std::end(listeners));
+            // sftk::dispatch_all is equivalent of calling
+            // sftk::dispatch on each listener if the previous returns true
+            sftk::dispatch_all(window, event, std::begin(listeners), std::end(listeners));
 
         window.clear();
         window.display();

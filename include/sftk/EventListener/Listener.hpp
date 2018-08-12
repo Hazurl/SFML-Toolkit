@@ -1,11 +1,11 @@
 #pragma once
 
-#include <sfmltk/EventListener/EventListener.hpp>
+#include <sftk/EventListener/EventListener.hpp>
 
 #include <type_traits>
 #include <functional>
 
-namespace sfmltk {
+namespace sftk {
 namespace details {
 
 template<typename is_zero, unsigned n, typename A, bool b, typename...Ts> 
