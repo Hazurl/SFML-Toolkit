@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 
-#include <sftk/EventListener/EventListener.hpp>
-#include <sftk/EventListener/Listener.hpp>
+#include <sftk/eventListener/EventListener.hpp>
+#include <sftk/eventListener/Listener.hpp>
 
 #include <iostream>
 

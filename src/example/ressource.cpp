@@ -2,23 +2,10 @@
 
 #include <sftk/ressource/Ressource.hpp>
 
-#include <iostream>
-
 int main() {
-/*
-    using sftk::operator<<;
-
-    std::cout << sf::Vector2f(42.42f, 1337) << '\n';
-    std::cout << sf::Vector2i(42, -1337) << '\n';
-    std::cout << sf::Vector2u(42, 1337) << '\n';
-
-    std::cout << [] () { auto s = sf::CircleShape(12); s.setPosition({10, -20}); return s; }() << '\n';
-*/
-
-
     auto load = sftk::backup( // backup execute the first loader, if it fail it execute the second one
         sftk::load_from_file<sf::Texture>("non_existing_file.wtf"),
-        sftk::load_from_file<sf::Texture>("../brick-breaker/res/img/bw_brick_soft.png")
+        sftk::load_from_file<sf::Texture>("/a/path/to/a/valid/texture.png")
     );
 
     sftk::Ressource<sf::Texture> res(load);

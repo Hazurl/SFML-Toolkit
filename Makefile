@@ -82,17 +82,29 @@ SRC_MAIN := main.cpp
 ##### MODULES
 #####
 
-EVENT_SRC := sftk/EventListener/EventListener.cpp
+EVENT_SRC := sftk/eventListener/EventListener.cpp
 EVENT_MAIN := example/eventListener.cpp
 
 TARGET_EVENT_EXE :=$(BUILD_EXE_FOLDER)/eventListener_example.cpp
-TARGET_EVENT_SHARED :=$(BUILD_SHARED_FOLDER)/libeventListener_example.so
-TARGET_EVENT_STATIC :=$(BUILD_STATIC_FOLDER)/libeventListener_example.a
+TARGET_EVENT_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkeventListener.so
+TARGET_EVENT_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkeventListener.a
 
 EVENT_OBJ_MAIN := $(EVENT_MAIN:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o)
 EVENT_OBJ_EXE := $(EVENT_OBJ_MAIN) $(EVENT_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o) 
 EVENT_OBJ_SHARED := $(EVENT_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FOLDER)/%.o)
 EVENT_OBJ_STATIC := $(EVENT_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
+
+RESSOURCE_SRC := 
+RESSOURCE_MAIN := example/ressource.cpp
+
+TARGET_RESSOURCE_EXE :=$(BUILD_EXE_FOLDER)/ressource_example.cpp
+TARGET_RESSOURCE_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkressource.so
+TARGET_RESSOURCE_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkressource.a
+
+RESSOURCE_OBJ_MAIN := $(RESSOURCE_MAIN:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o)
+RESSOURCE_OBJ_EXE := $(RESSOURCE_OBJ_MAIN) $(RESSOURCE_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o) 
+RESSOURCE_OBJ_SHARED := $(RESSOURCE_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FOLDER)/%.o)
+RESSOURCE_OBJ_STATIC := $(RESSOURCE_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
 
 #####
 ##### FLAGS
@@ -338,6 +350,24 @@ run-eventlistener:
 	@$(call _special,EXECUTING $(TARGET_EVENT_EXE)...)
 	@$(TARGET_EVENT_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
 
+ressource:
+	@$(call _header,BUILDING RESSOURCE LISTENER EXAMPLE...)
+	@make $(TARGET_RESSOURCE_EXE)
+
+ressource-shared:
+	@$(call _header,BUILDING SHARED RESSOURCE LISTENER...)
+	@make $(TARGET_RESSOURCE_SHARED)
+
+ressource-static:
+	@$(call _header,BUILDING STATIC RESSOURCE LISTENER...)
+	@make $(TARGET_RESSOURCE_STATIC)
+
+run-ressource: 
+	@make ressource
+	@echo
+	@$(call _special,EXECUTING $(TARGET_RESSOURCE_EXE)...)
+	@$(TARGET_RESSOURCE_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
+
 $(_BUILD_DIR):
 	@mkdir -p $(_BUILD_DIR)
 
@@ -397,6 +427,23 @@ $(TARGET_EVENT_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(EVENT_OBJ_SHARED)
 	@$(call _sub-header,Shared library creation...)
 	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_EVENT_SHARED) $(EVENT_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
 	@$(call _header,Shared library done ($(TARGET_EVENT_SHARED)))
+
+
+
+$(TARGET_RESSOURCE_EXE): $(_BUILD_DIR) $(LIB_TO_BUILD) $(RESSOURCE_OBJ_EXE)
+	@$(call _sub-header,Linking...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) $(RESSOURCE_OBJ_EXE) -o "$@" $(LIBS_PATH) $(LIBS)
+	@$(call _header,Executable done ($(RESSOURCE_OBJ_EXE)))
+
+$(TARGET_RESSOURCE_STATIC): $(_BUILD_DIR) $(LIB_TO_BUILD) $(RESSOURCE_OBJ_STATIC)
+	@$(call _sub-header,Archiving...)
+	@$(SXX) $(STATIC_LINK_FLAG) $(TARGET_RESSOURCE_STATIC) $(RESSOURCE_OBJ_STATIC)
+	@$(call _header,Static library done ($(TARGET_RESSOURCE_STATIC)))
+
+$(TARGET_RESSOURCE_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(RESSOURCE_OBJ_SHARED)
+	@$(call _sub-header,Shared library creation...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_RESSOURCE_SHARED) $(RESSOURCE_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
+	@$(call _header,Shared library done ($(TARGET_RESSOURCE_SHARED)))
 
 
 # Just to avoid file without headers

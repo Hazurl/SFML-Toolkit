@@ -5,6 +5,7 @@ A collections of systems that will make your life easier when using SFML.
 ## Currently Available
 
 - Control events's propagation through your objects: [EventListener](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Events/EventListener.md)
+- Auto loading/unloading ressources : [Ressource](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Ressource/Ressource.md)
 
 ## Usage
 
@@ -16,3 +17,4 @@ You can build each part separately:
 
 You can replace `X` by:
 - `eventlistener`
+- `ressource`
