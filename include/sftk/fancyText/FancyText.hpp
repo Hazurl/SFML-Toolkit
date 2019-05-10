@@ -5,11 +5,24 @@
 
 namespace sftk {
 
-class FancyText : public sf::Transformable, sf::Drawable {
+class TextBuilder;
+
+class FancyText : public sf::Transformable, public sf::Drawable {
 public:
 
-private:
-    sf::VertexArray const vertices;
+    FancyText(TextBuilder&& builder);
+    FancyText(TextBuilder const& builder);
+
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+//private:
+
+    void finish_builder(TextBuilder const& builder);
+    
+    sf::VertexArray vertices;
+    sf::FloatRect bounds;
+    // pair of texture + position at which it apply
+    std::vector<std::pair<sf::Texture const*, std::size_t>> textures;
 };
 
 namespace txt {
@@ -24,7 +37,6 @@ struct outline_thickness_t { float thickness; };
 size_t size(unsigned int _size);
 spacing_t spacing(float _factor);
 line_spacing_t line_spacing(float _factor);
-color_t color(sf::Color const& _color);
 outline_color_t outline_color(sf::Color const& _color);
 outline_thickness_t outline_thickness(float _thickness);
 
@@ -39,7 +51,7 @@ public:
     friend TextBuilder& operator <<(TextBuilder& builder, txt::size_t character_size);
     friend TextBuilder& operator <<(TextBuilder& builder, txt::spacing_t spacing);
     friend TextBuilder& operator <<(TextBuilder& builder, txt::line_spacing_t line_spacing);
-    friend TextBuilder& operator <<(TextBuilder& builder, txt::color_t color);
+    friend TextBuilder& operator <<(TextBuilder& builder, sf::Color color);
     friend TextBuilder& operator <<(TextBuilder& builder, txt::outline_color_t outline_color);
     friend TextBuilder& operator <<(TextBuilder& builder, txt::outline_thickness_t outline_thickness);
     friend TextBuilder& operator <<(TextBuilder& builder, sf::Text::Style style);
@@ -48,7 +60,7 @@ public:
     friend TextBuilder operator <<(TextBuilder&& builder, txt::size_t character_size);
     friend TextBuilder operator <<(TextBuilder&& builder, txt::spacing_t spacing);
     friend TextBuilder operator <<(TextBuilder&& builder, txt::line_spacing_t line_spacing);
-    friend TextBuilder operator <<(TextBuilder&& builder, txt::color_t color);
+    friend TextBuilder operator <<(TextBuilder&& builder, sf::Color color);
     friend TextBuilder operator <<(TextBuilder&& builder, txt::outline_color_t outline_color);
     friend TextBuilder operator <<(TextBuilder&& builder, txt::outline_thickness_t outline_thickness);
     friend TextBuilder operator <<(TextBuilder&& builder, sf::Text::Style style);
@@ -58,18 +70,21 @@ public:
     friend TextBuilder& operator <<(TextBuilder& builder, std::string_view const& str);
     friend TextBuilder& operator <<(TextBuilder& builder, std::wstring const& str);
     friend TextBuilder& operator <<(TextBuilder& builder, std::wstring_view const& str);
-    friend TextBuilder& operator <<(TextBuilder& builder, sf::Uint32 const& unicode);
+    friend TextBuilder& operator <<(TextBuilder& builder, sf::Uint32 unicode);
 
     friend TextBuilder operator <<(TextBuilder&& builder, sf::String const& str);
     friend TextBuilder operator <<(TextBuilder&& builder, std::string const& str);
     friend TextBuilder operator <<(TextBuilder&& builder, std::string_view const& str);
     friend TextBuilder operator <<(TextBuilder&& builder, std::wstring const& str);
     friend TextBuilder operator <<(TextBuilder&& builder, std::wstring_view const& str);
-    friend TextBuilder operator <<(TextBuilder&& builder, sf::Uint32 const& unicode);
+    friend TextBuilder operator <<(TextBuilder&& builder, sf::Uint32 unicode);
 
     void append(sf::Uint32 unicode);
 
 private:
+
+    friend FancyText;
+
     sf::Font const* font;
     unsigned int character_size{ 30 };
     float line_spacing_factor{ 1.0f };
@@ -93,11 +108,16 @@ private:
     bool is_striketrough{ false };
     float underline_offset{ 0.0f };
     float striketrough_offset{ 0.0f };
-    float underline_thickness{ 0.0f };
+    float line_thickness{ 0.0f };
+    float underline_start{ 0.0f };
+    float striketrough_start{ 0.0f };
 
     float whitespace_width{ 0.0f };
     float line_spacing{ 0.0f };
     float letter_spacing{ 0.0f };
+
+    struct CharacterSizeChanged { sf::Texture const* texture; std::size_t character_position; };
+    std::vector<CharacterSizeChanged> character_size_history{ { &font->getTexture(character_size), 0 } };
 
     sf::VertexArray vertices{ sf::Triangles };
 };
