@@ -12,18 +12,28 @@ int main() {
     using namespace sftk;
 
     sf::Font font_roboto;
-    if (!font_roboto.loadFromFile("../../../Downloads/Roboto/Roboto-Regular.ttf")) {
+    if (!font_roboto.loadFromFile("./assets/font/Roboto-Regular.ttf")) {
         return 1;
     }
 
     sf::Font font_neo;
-    if (!font_roboto.loadFromFile("../multi-pong/assets/neoletters.ttf")) {
+    if (!font_neo.loadFromFile("./assets/font/neoletters.ttf")) {
         return 1;
     }
 
     using namespace std::string_view_literals;
+    std::cout << "###############" << font_neo.getUnderlineThickness(30);
+    std::cout << "###############" << font_roboto.getUnderlineThickness(30);
 
-    sftk::FancyText text = sftk::TextBuilder{ font_roboto }
+    sftk::FancyText text = sftk::TextBuilder{ font_neo }
+        << (sf::Text::Style)(sf::Text::Underlined | sf::Text::StrikeThrough)
+        << "O"sv
+        << font_roboto
+        << "O"sv
+        << "O"sv
+        << font_neo
+        << "O"sv
+        /*
         << "Hel"sv
         << sf::Text::StrikeThrough
         << "lo "sv
@@ -39,7 +49,10 @@ int main() {
         << "! My n"sv
         << txt::outline_color(sf::Color::White)
         << txt::outline_thickness(2)
-        << "ame is\n"sv
+        << "ame is"sv
+        << txt::size(45)
+        << '\n'
+        << txt::size(30)
         << sf::Color::Blue
         << txt::outline_thickness(0)
         << "H"sv
@@ -52,9 +65,13 @@ int main() {
         << sf::Text::Regular
         << "rl"sv
         << font_neo
-        << " and now with another font\n"sv;
+        << " and n"sv
+        << txt::size(12)
+        << "ow with another font\n"sv
+        */;
 
     text.setPosition(0.5f * (800 - text.bounds.width), 200);
+
 
     while (window.isOpen()) {
         sf::Event event;

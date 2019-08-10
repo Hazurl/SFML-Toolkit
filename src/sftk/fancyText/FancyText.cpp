@@ -92,7 +92,7 @@ void FancyText::finish_builder(TextBuilder const& builder) {
     // If we're using the strike through style, add the last line across all characters
     if (builder.is_striketrough && (builder.x > 0))
     {
-        addLine(vertices, builder.striketrough_start, builder.x, builder.y, builder.fill_color, builder.striketrough_offset, builder.underline_offset);
+        addLine(vertices, builder.striketrough_start, builder.x, builder.y, builder.fill_color, builder.striketrough_offset, builder.line_thickness);
 
         if (builder.outline_thickness != 0)
             addLine(vertices, builder.striketrough_start, builder.x, builder.y, builder.outline_color, builder.striketrough_offset, builder.line_thickness, builder.outline_thickness);
@@ -131,7 +131,7 @@ void FancyText::draw(sf::RenderTarget& target, sf::RenderStates states) const {
         auto next_it = it + 1;
         std::size_t next_pos{ next_it == std::end(textures) ? vertices.getVertexCount() : next_it->second };
 
-        std::cout << "DRAW " << txt << ": " << pos << " -> " << next_pos << '\n';
+        //std::cout << "DRAW " << txt << ": " << pos << " -> " << next_pos << '\n';
 
         states.texture = txt;
         target.draw(&vertices[pos], next_pos - pos, sf::Triangles, states);
@@ -177,11 +177,32 @@ TextBuilder::TextBuilder(sf::Font const& _font)
 }
 
 TextBuilder& operator <<(TextBuilder& builder, sf::Font& _font) {
-    // TODO: Draw underline and striketrough
     // TODO: Store the maximum character size of the current line and the index of the first vertice of the current line
     // TODO: Offset each vertices since the start of the line
 
     if (builder.font == &_font) { return builder; }
+
+    // If we're using the underlined style, add the last line
+    if (builder.is_underlined && (builder.x > 0))
+    {
+        addLine(builder.vertices, builder.underline_start, builder.x, builder.y, builder.fill_color, builder.underline_offset, builder.line_thickness);
+
+        if (builder.outline_thickness != 0)
+            addLine(builder.vertices, builder.underline_start, builder.x, builder.y, builder.outline_color, builder.underline_offset, builder.line_thickness, builder.outline_thickness);
+
+        builder.underline_start = builder.x;
+    }
+
+    // If we're using the strike through style, add the last line across all characters
+    if (builder.is_striketrough && (builder.x > 0))
+    {
+        addLine(builder.vertices, builder.striketrough_start, builder.x, builder.y, builder.fill_color, builder.striketrough_offset, builder.line_thickness);
+
+        if (builder.outline_thickness != 0)
+            addLine(builder.vertices, builder.striketrough_start, builder.x, builder.y, builder.outline_color, builder.striketrough_offset, builder.line_thickness, builder.outline_thickness);
+        builder.striketrough_start = builder.x;
+    }
+
 
     builder.font = &_font;
 
@@ -193,7 +214,9 @@ TextBuilder& operator <<(TextBuilder& builder, sf::Font& _font) {
     }
 
     builder.underline_offset = builder.font->getUnderlinePosition(builder.character_size);
+    std::cout << "############# thickness: " << builder.line_thickness;
     builder.line_thickness = builder.font->getUnderlineThickness(builder.character_size);
+    std::cout << " -> " << builder.line_thickness << '\n';
     builder.line_spacing = builder.font->getLineSpacing(builder.character_size) * builder.line_spacing_factor;
 
     auto const& space_glyph = builder.font->getGlyph(L' ', builder.character_size, builder.is_bold, builder.outline_thickness);
@@ -206,9 +229,30 @@ TextBuilder& operator <<(TextBuilder& builder, sf::Font& _font) {
 }
 
 TextBuilder& operator <<(TextBuilder& builder, txt::size_t _character_size) {
-    // TODO: Draw underline and striketrough
     // TODO: Store the maximum character size of the current line and the index of the first vertice of the current line
     // TODO: Offset each vertices since the start of the line
+
+    if(builder.character_size == _character_size.size) return builder;
+
+    // If we're using the underlined style, add the last line
+    if (builder.is_underlined && (builder.x > 0))
+    {
+        addLine(builder.vertices, builder.underline_start, builder.x, builder.y, builder.fill_color, builder.underline_offset, builder.line_thickness);
+
+        if (builder.outline_thickness != 0)
+            addLine(builder.vertices, builder.underline_start, builder.x, builder.y, builder.outline_color, builder.underline_offset, builder.line_thickness, builder.outline_thickness);
+        builder.underline_start = builder.x;
+    }
+
+    // If we're using the strike through style, add the last line across all characters
+    if (builder.is_striketrough && (builder.x > 0))
+    {
+        addLine(builder.vertices, builder.striketrough_start, builder.x, builder.y, builder.fill_color, builder.striketrough_offset, builder.line_thickness);
+
+        if (builder.outline_thickness != 0)
+            addLine(builder.vertices, builder.striketrough_start, builder.x, builder.y, builder.outline_color, builder.striketrough_offset, builder.line_thickness, builder.outline_thickness);
+        builder.striketrough_start = builder.x;
+    }
 
     builder.character_size = _character_size.size;
     builder.underline_offset = builder.font->getUnderlinePosition(builder.character_size);
@@ -355,38 +399,6 @@ TextBuilder& operator <<(TextBuilder& builder, sf::Text::Style _style) {
     return builder;
 }
 
-TextBuilder operator <<(TextBuilder&& builder, sf::Font& _font) {
-    return std::move(builder << _font);
-}
-
-TextBuilder operator <<(TextBuilder&& builder, txt::size_t _character_size) {
-    return std::move(builder << _character_size);
-}
-
-TextBuilder operator <<(TextBuilder&& builder, txt::spacing_t _spacing) {
-    return std::move(builder << _spacing);
-}
-
-TextBuilder operator <<(TextBuilder&& builder, txt::line_spacing_t _line_spacing) {
-    return std::move(builder << _line_spacing);
-}
-
-TextBuilder operator <<(TextBuilder&& builder, sf::Color _color) {
-    return std::move(builder << _color);
-}
-
-TextBuilder operator <<(TextBuilder&& builder, txt::outline_color_t _outline_color) {
-    return std::move(builder << _outline_color);
-}
-
-TextBuilder operator <<(TextBuilder&& builder, txt::outline_thickness_t _outline_thickness) {
-    return std::move(builder << _outline_thickness);
-}
-
-TextBuilder operator <<(TextBuilder&& builder, sf::Text::Style _style) {
-    return std::move(builder << _style);
-}
-
 void TextBuilder::append(sf::Uint32 unicode) {
     std::cout << "character_size: " << character_size << '\n';
     std::cout << "line_spacing_factor: " << line_spacing_factor << '\n';
@@ -417,13 +429,14 @@ void TextBuilder::append(sf::Uint32 unicode) {
     x += font->getKerning(previous_char, unicode, character_size);
 
     // If we're using the underlined style and there's a new line, draw a line
-    if (is_underlined && (unicode == L'\n' && unicode != L'\n'))
+    if (is_underlined && (unicode == L'\n' && previous_char != L'\n'))
     {
         std::cout << "UNDERLINED!\n";
         addLine(vertices, underline_start, x, y, fill_color, underline_offset, line_thickness);
 
         if (outline_thickness != 0)
             addLine(vertices, underline_start, x, y, outline_color, underline_offset, line_thickness, outline_thickness);
+        underline_start = 0;
     }
 
     // If we're using the strike through style and there's a new line, draw a line across all characters
@@ -434,6 +447,7 @@ void TextBuilder::append(sf::Uint32 unicode) {
 
         if (outline_thickness != 0)
             addLine(vertices, striketrough_start, x, y, outline_color, striketrough_offset, line_thickness, outline_thickness);
+        striketrough_start = 0;
     }
 
     previous_char = unicode;
@@ -457,7 +471,7 @@ void TextBuilder::append(sf::Uint32 unicode) {
         max_x = std::max(max_x, x);
         max_y = std::max(max_y, y);
 
-        // Next glyph, no need to create a quad for whitespace
+        // Next glyph, no need to create a quad for whitespaces
         return;
     }
 
@@ -551,30 +565,6 @@ TextBuilder& operator <<(TextBuilder& builder, std::wstring_view const& str) {
 TextBuilder& operator <<(TextBuilder& builder, sf::Uint32 unicode) {
     builder.append(unicode);
     return builder;
-}
-
-TextBuilder operator <<(TextBuilder&& builder, sf::String const& str) {
-    return std::move(builder << str);
-}
-
-TextBuilder operator <<(TextBuilder&& builder, std::string const& str) {
-    return std::move(builder << str);
-}
-
-TextBuilder operator <<(TextBuilder&& builder, std::string_view const& str) {
-    return std::move(builder << str);
-}
-
-TextBuilder operator <<(TextBuilder&& builder, std::wstring const& str) {
-    return std::move(builder << str);
-}
-
-TextBuilder operator <<(TextBuilder&& builder, std::wstring_view const& str) {
-    return std::move(builder << str);
-}
-
-TextBuilder operator <<(TextBuilder&& builder, sf::Uint32 unicode) {
-    return std::move(builder << unicode);
 }
 
 }

@@ -56,28 +56,12 @@ public:
     friend TextBuilder& operator <<(TextBuilder& builder, txt::outline_thickness_t outline_thickness);
     friend TextBuilder& operator <<(TextBuilder& builder, sf::Text::Style style);
 
-    friend TextBuilder operator <<(TextBuilder&& builder, sf::Font& font);
-    friend TextBuilder operator <<(TextBuilder&& builder, txt::size_t character_size);
-    friend TextBuilder operator <<(TextBuilder&& builder, txt::spacing_t spacing);
-    friend TextBuilder operator <<(TextBuilder&& builder, txt::line_spacing_t line_spacing);
-    friend TextBuilder operator <<(TextBuilder&& builder, sf::Color color);
-    friend TextBuilder operator <<(TextBuilder&& builder, txt::outline_color_t outline_color);
-    friend TextBuilder operator <<(TextBuilder&& builder, txt::outline_thickness_t outline_thickness);
-    friend TextBuilder operator <<(TextBuilder&& builder, sf::Text::Style style);
-
     friend TextBuilder& operator <<(TextBuilder& builder, sf::String const& str);
     friend TextBuilder& operator <<(TextBuilder& builder, std::string const& str);
     friend TextBuilder& operator <<(TextBuilder& builder, std::string_view const& str);
     friend TextBuilder& operator <<(TextBuilder& builder, std::wstring const& str);
     friend TextBuilder& operator <<(TextBuilder& builder, std::wstring_view const& str);
     friend TextBuilder& operator <<(TextBuilder& builder, sf::Uint32 unicode);
-
-    friend TextBuilder operator <<(TextBuilder&& builder, sf::String const& str);
-    friend TextBuilder operator <<(TextBuilder&& builder, std::string const& str);
-    friend TextBuilder operator <<(TextBuilder&& builder, std::string_view const& str);
-    friend TextBuilder operator <<(TextBuilder&& builder, std::wstring const& str);
-    friend TextBuilder operator <<(TextBuilder&& builder, std::wstring_view const& str);
-    friend TextBuilder operator <<(TextBuilder&& builder, sf::Uint32 unicode);
 
     void append(sf::Uint32 unicode);
 
@@ -121,5 +105,10 @@ private:
 
     sf::VertexArray vertices{ sf::Triangles };
 };
+
+template<typename T>
+TextBuilder operator <<(TextBuilder&& builder, T&& t) {
+    return std::move(builder << std::forward<T>(t));
+}
 
 }
