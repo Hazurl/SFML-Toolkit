@@ -52,8 +52,10 @@ FancyText::FancyText(TextBuilder&& builder) : vertices{ std::move(builder.vertic
 FancyText::FancyText(TextBuilder const& builder) : vertices{ builder.vertices }, bounds{} { finish_builder(builder); }
 
 void FancyText::finish_builder(TextBuilder const& builder) {
+    std::cout << "vertices count: " << vertices.getVertexCount() << '\n';
     std::cout << "character_size: " << builder.character_size << '\n';
     std::cout << "line_spacing_factor: " << builder.line_spacing_factor << '\n';
+    std::cout << "letter_spacing_factor: " << builder.letter_spacing_factor << '\n';
     std::cout << "outline_thickness: " << builder.outline_thickness << '\n';
     std::cout << "x: " << builder.x << '\n';
     std::cout << "y: " << builder.y << '\n';
@@ -70,7 +72,8 @@ void FancyText::finish_builder(TextBuilder const& builder) {
     std::cout << "striketrough_offset: " << builder.striketrough_offset << '\n';
     std::cout << "line_thickness: " << builder.line_thickness << '\n';
     std::cout << "whitespace_width: " << builder.whitespace_width << '\n';
-    std::cout << "line_spacing: " << builder.line_spacing << '\n';
+    std::cout << "max_line_spacing_since_start_of_line_multiplied: " << builder.max_line_spacing_since_start_of_line_multiplied << '\n';
+    std::cout << "max_line_spacing_since_start_of_line: " << builder.max_line_spacing_since_start_of_line << '\n';
     std::cout << "letter_spacing: " << builder.letter_spacing << '\n';
 
     for(auto const& history : builder.character_size_history) {
@@ -78,6 +81,13 @@ void FancyText::finish_builder(TextBuilder const& builder) {
             history.texture,
             history.character_position
         );
+    }
+
+    auto max_line_spacing_since_start_of_line = std::max(builder.max_line_spacing_since_start_of_line, builder.font->getLineSpacing(builder.character_size));    
+    auto max_line_spacing_since_start_of_line_multiplied = max_line_spacing_since_start_of_line * builder.line_spacing_factor;
+
+    for(auto i = builder.vertex_indice_start_of_line; i < vertices.getVertexCount(); ++i) {
+        vertices[i].position.y += max_line_spacing_since_start_of_line_multiplied;
     }
 
     // If we're using the underlined style, add the last line
@@ -166,7 +176,7 @@ TextBuilder::TextBuilder(sf::Font const& _font)
     : font{ &_font }
     , underline_offset{ font->getUnderlinePosition(character_size) }
     , line_thickness{ font->getUnderlineThickness(character_size) }
-    , line_spacing{ font->getLineSpacing(character_size) }
+    , max_line_spacing_since_start_of_line{ font->getLineSpacing(character_size) }
     , vertices{ sf::PrimitiveType::Triangles }
 {
     auto const& space_glyph = font->getGlyph(L' ', character_size, is_bold, outline_thickness);
@@ -217,7 +227,8 @@ TextBuilder& operator <<(TextBuilder& builder, sf::Font& _font) {
     std::cout << "############# thickness: " << builder.line_thickness;
     builder.line_thickness = builder.font->getUnderlineThickness(builder.character_size);
     std::cout << " -> " << builder.line_thickness << '\n';
-    builder.line_spacing = builder.font->getLineSpacing(builder.character_size) * builder.line_spacing_factor;
+    builder.max_line_spacing_since_start_of_line = std::max(builder.max_line_spacing_since_start_of_line, builder.font->getLineSpacing(builder.character_size));
+    builder.max_line_spacing_since_start_of_line_multiplied = builder.max_line_spacing_since_start_of_line * builder.line_spacing_factor;
 
     auto const& space_glyph = builder.font->getGlyph(L' ', builder.character_size, builder.is_bold, builder.outline_thickness);
     builder.whitespace_width = space_glyph.advance;
@@ -257,7 +268,8 @@ TextBuilder& operator <<(TextBuilder& builder, txt::size_t _character_size) {
     builder.character_size = _character_size.size;
     builder.underline_offset = builder.font->getUnderlinePosition(builder.character_size);
     builder.line_thickness = builder.font->getUnderlineThickness(builder.character_size);
-    builder.line_spacing = builder.font->getLineSpacing(builder.character_size) * builder.line_spacing_factor;
+    builder.max_line_spacing_since_start_of_line = std::max(builder.max_line_spacing_since_start_of_line, builder.font->getLineSpacing(builder.character_size));
+    builder.max_line_spacing_since_start_of_line_multiplied = builder.max_line_spacing_since_start_of_line * builder.line_spacing_factor;
 
     auto const& space_glyph = builder.font->getGlyph(L' ', builder.character_size, builder.is_bold, builder.outline_thickness);
     builder.whitespace_width = space_glyph.advance;
@@ -277,13 +289,14 @@ TextBuilder& operator <<(TextBuilder& builder, txt::size_t _character_size) {
 }
 
 TextBuilder& operator <<(TextBuilder& builder, txt::spacing_t _spacing) {
-    builder.letter_spacing = (builder.whitespace_width / 3.0f) * (_spacing.factor - 1.0f);
+    builder.letter_spacing_factor = _spacing.factor;
+    builder.letter_spacing = (builder.whitespace_width / 3.0f) * (builder.letter_spacing_factor - 1.0f);
     return builder;
 }
 
 TextBuilder& operator <<(TextBuilder& builder, txt::line_spacing_t _line_spacing) {
     builder.line_spacing_factor = _line_spacing.factor;
-    builder.line_spacing = builder.font->getLineSpacing(builder.character_size) * builder.line_spacing_factor;
+    builder.max_line_spacing_since_start_of_line_multiplied = builder.max_line_spacing_since_start_of_line * builder.line_spacing_factor;
     return builder;
 }
 
@@ -355,6 +368,7 @@ TextBuilder& operator <<(TextBuilder& builder, txt::outline_thickness_t _outline
 
     auto const& space_glyph = builder.font->getGlyph(L' ', builder.character_size, builder.is_bold, builder.outline_thickness);
     builder.whitespace_width = space_glyph.advance;
+    builder.letter_spacing = (builder.whitespace_width / 3.0f) * (builder.letter_spacing_factor - 1.0f);
 
     return builder;
 }
@@ -390,6 +404,7 @@ TextBuilder& operator <<(TextBuilder& builder, sf::Text::Style _style) {
 
         auto const& space_glyph = builder.font->getGlyph(L' ', builder.character_size, builder.is_bold, builder.outline_thickness);
         builder.whitespace_width = space_glyph.advance;
+        builder.letter_spacing = (builder.whitespace_width / 3.0f) * (builder.letter_spacing_factor - 1.0f);
 
         auto x_bounds = builder.font->getGlyph(L'x', builder.character_size, builder.is_bold).bounds;
         builder.striketrough_offset = x_bounds.top + x_bounds.height / 2.0f;
@@ -400,8 +415,11 @@ TextBuilder& operator <<(TextBuilder& builder, sf::Text::Style _style) {
 }
 
 void TextBuilder::append(sf::Uint32 unicode) {
+    std::cout << "\n################\n";
+    std::cout << "vertices count: " << vertices.getVertexCount() << '\n';
     std::cout << "character_size: " << character_size << '\n';
     std::cout << "line_spacing_factor: " << line_spacing_factor << '\n';
+    std::cout << "letter_spacing_factor: " << letter_spacing_factor << '\n';
     std::cout << "outline_thickness: " << outline_thickness << '\n';
     std::cout << "x: " << x << '\n';
     std::cout << "y: " << y << '\n';
@@ -418,12 +436,16 @@ void TextBuilder::append(sf::Uint32 unicode) {
     std::cout << "striketrough_offset: " << striketrough_offset << '\n';
     std::cout << "line_thickness: " << line_thickness << '\n';
     std::cout << "whitespace_width: " << whitespace_width << '\n';
-    std::cout << "line_spacing: " << line_spacing << '\n';
+    std::cout << "max_line_spacing_since_start_of_line_multiplied: " << max_line_spacing_since_start_of_line_multiplied << '\n';
+    std::cout << "max_line_spacing_since_start_of_line: " << max_line_spacing_since_start_of_line << '\n';
     std::cout << "letter_spacing: " << letter_spacing << '\n';
 
     if (unicode == L'\r') {
         return;
     }
+
+    max_line_spacing_since_start_of_line = std::max(max_line_spacing_since_start_of_line, font->getLineSpacing(character_size));    
+    max_line_spacing_since_start_of_line_multiplied = std::max(max_line_spacing_since_start_of_line_multiplied, max_line_spacing_since_sptart_of_line * line_spacing_factor);
 
     std::cout << ">> KERNING: x += " << font->getKerning(previous_char, unicode, character_size) << '\n';
     x += font->getKerning(previous_char, unicode, character_size);
@@ -464,7 +486,15 @@ void TextBuilder::append(sf::Uint32 unicode) {
         {
             case L' ':  x += whitespace_width;     break;
             case L'\t': x += whitespace_width * 4; break;
-            case L'\n': y += line_spacing; x = 0;  break;
+            case L'\n': {
+                y += max_line_spacing_since_start_of_line_multiplied; 
+                x = 0; 
+                for(; vertex_indice_start_of_line < vertices.getVertexCount(); ++vertex_indice_start_of_line) {
+                    vertices[vertex_indice_start_of_line].position.y += max_line_spacing_since_start_of_line_multiplied;
+                }
+                max_line_spacing_since_start_of_line = max_line_spacing_since_start_of_line_multiplied = 0.0f; 
+                break;
+            }
         }
 
         // Update the current bounds (max coordinates)

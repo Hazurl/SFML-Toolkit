@@ -72,12 +72,13 @@ private:
     sf::Font const* font;
     unsigned int character_size{ 30 };
     float line_spacing_factor{ 1.0f };
+    float letter_spacing_factor{ 1.0f };
     sf::Color fill_color{ sf::Color::White };
     sf::Color outline_color{ sf::Color::Black };
     float outline_thickness{ 0.0f };
 
     float x{ 0.0f };
-    float y{ static_cast<float>(character_size) };
+    float y{ 0.0f };
     float min_x{ 0.0f };
     float max_x{ 0.0f };
     float min_y{ 0.0f };
@@ -96,8 +97,11 @@ private:
     float underline_start{ 0.0f };
     float striketrough_start{ 0.0f };
 
+    std::size_t vertex_indice_start_of_line{ 0 };
+    float max_line_spacing_since_start_of_line{ 0 };
+    float max_line_spacing_since_start_of_line_multiplied{ 0.0f };
+
     float whitespace_width{ 0.0f };
-    float line_spacing{ 0.0f };
     float letter_spacing{ 0.0f };
 
     struct CharacterSizeChanged { sf::Texture const* texture; std::size_t character_position; };

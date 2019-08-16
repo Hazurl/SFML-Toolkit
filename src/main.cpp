@@ -22,18 +22,15 @@ int main() {
     }
 
     using namespace std::string_view_literals;
-    std::cout << "###############" << font_neo.getUnderlineThickness(30);
-    std::cout << "###############" << font_roboto.getUnderlineThickness(30);
 
-    sftk::FancyText text = sftk::TextBuilder{ font_neo }
-        << (sf::Text::Style)(sf::Text::Underlined | sf::Text::StrikeThrough)
-        << "O"sv
-        << font_roboto
-        << "O"sv
-        << "O"sv
-        << font_neo
-        << "O"sv
-        /*
+    sftk::FancyText text = sftk::TextBuilder{ font_roboto }
+    /*
+        << txt::size(45)
+        << "OO"sv
+        << txt::size(12)
+        << "OO"sv
+    */
+    
         << "Hel"sv
         << sf::Text::StrikeThrough
         << "lo "sv
@@ -49,9 +46,7 @@ int main() {
         << "! My n"sv
         << txt::outline_color(sf::Color::White)
         << txt::outline_thickness(2)
-        << "ame is"sv
-        << txt::size(45)
-        << '\n'
+        << "ame is\n"sv
         << txt::size(30)
         << sf::Color::Blue
         << txt::outline_thickness(0)
@@ -68,10 +63,17 @@ int main() {
         << " and n"sv
         << txt::size(12)
         << "ow with another font\n"sv
-        */;
+        << txt::spacing(1)
+        << txt::line_spacing(2)
+        << "ow with another font\n"sv
+        << txt::line_spacing(1)
+        << "ow with another font"sv
+        ;
 
-    text.setPosition(0.5f * (800 - text.bounds.width), 200);
+    sf::Text t("ow with another font", font_neo, 12);
 
+    text.setPosition(0.5f * (800 - text.bounds.width), 0.5f * (600 - text.bounds.height));
+    t.setPosition(0.5f * (800 - t.getLocalBounds().width), 350);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -80,6 +82,7 @@ int main() {
                 window.close();
         window.clear();
         window.draw(text);
+        //window.draw(t);
         window.display();
     }
 
