@@ -76,7 +76,7 @@ SRC_EXCLUDE_FILE :=
 EXAMPLES := $(shell find $(SRC_FOLDER)/example -name '*$(EXT_SRC_FILE)')
 SRC_MAINS := main.cpp $(EXAMPLES:$(SRC_FOLDER)/%=%)
 # The main file to use (must be in $(SRC_MAINS))
-SRC_MAIN := main.cpp
+SRC_MAIN := example/fancyText.cpp
 
 #####
 ##### MODULES
