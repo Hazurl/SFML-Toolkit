@@ -65,6 +65,7 @@ public:
 
     friend TextBuilder& operator <<(TextBuilder& builder, sf::String const& str);
     friend TextBuilder& operator <<(TextBuilder& builder, std::string const& str);
+    friend TextBuilder& operator <<(TextBuilder& builder, const char* str);
     friend TextBuilder& operator <<(TextBuilder& builder, std::string_view const& str);
     friend TextBuilder& operator <<(TextBuilder& builder, std::wstring const& str);
     friend TextBuilder& operator <<(TextBuilder& builder, std::wstring_view const& str);

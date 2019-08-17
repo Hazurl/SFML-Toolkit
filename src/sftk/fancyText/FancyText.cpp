@@ -113,19 +113,19 @@ void FancyText::finish_builder(TextBuilder const& builder) {
     // If we're using the underlined style, add the last line
     if (builder.is_underlined && (builder.x > 0))
     {
-        add_line(vertices, builder.underline_start, builder.x, builder.y, builder.fill_color, builder.underline_offset, builder.line_thickness);
+        add_line(vertices, builder.underline_start, builder.x, builder.y + max_line_spacing_since_start_of_line_multiplied, builder.fill_color, builder.underline_offset, builder.line_thickness);
 
         if (builder.outline_thickness != 0)
-            add_line(vertices, builder.underline_start, builder.x, builder.y, builder.outline_color, builder.underline_offset, builder.line_thickness, builder.outline_thickness);
+            add_line(vertices, builder.underline_start, builder.x, builder.y + max_line_spacing_since_start_of_line_multiplied, builder.outline_color, builder.underline_offset, builder.line_thickness, builder.outline_thickness);
     }
 
     // If we're using the strike through style, add the last line across all characters
     if (builder.is_striketrough && (builder.x > 0))
     {
-        add_line(vertices, builder.striketrough_start, builder.x, builder.y, builder.fill_color, builder.striketrough_offset, builder.line_thickness);
+        add_line(vertices, builder.striketrough_start, builder.x, builder.y + max_line_spacing_since_start_of_line_multiplied, builder.fill_color, builder.striketrough_offset, builder.line_thickness);
 
         if (builder.outline_thickness != 0)
-            add_line(vertices, builder.striketrough_start, builder.x, builder.y, builder.outline_color, builder.striketrough_offset, builder.line_thickness, builder.outline_thickness);
+            add_line(vertices, builder.striketrough_start, builder.x, builder.y + max_line_spacing_since_start_of_line_multiplied, builder.outline_color, builder.striketrough_offset, builder.line_thickness, builder.outline_thickness);
     }
 
     // Update the bounding rectangle
@@ -573,6 +573,10 @@ TextBuilder& operator <<(TextBuilder& builder, std::string const& str) {
     }
     
     return builder;
+}
+
+TextBuilder& operator <<(TextBuilder& builder, const char* str) {
+    return builder << std::string_view{ str };
 }
 
 TextBuilder& operator <<(TextBuilder& builder, std::string_view const& str) {
