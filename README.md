@@ -18,3 +18,4 @@ You can build each part separately:
 You can replace `X` by:
 - `eventlistener`
 - `ressource`
+- `fancytext`
