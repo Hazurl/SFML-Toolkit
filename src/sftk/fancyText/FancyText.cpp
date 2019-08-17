@@ -48,8 +48,27 @@ void add_glyph_quad(sf::VertexArray& vertices, sf::Vector2f position, sf::Color 
 
 namespace sftk {
 
+FancyText::FancyText() : vertices{}, bounds{} {}
 FancyText::FancyText(TextBuilder&& builder) : vertices{ std::move(builder.vertices) }, bounds{} { finish_builder(builder); }
 FancyText::FancyText(TextBuilder const& builder) : vertices{ builder.vertices }, bounds{} { finish_builder(builder); }
+
+void FancyText::setText(TextBuilder&& builder) {
+    vertices = std::move(builder.vertices);
+    finish_builder(builder); 
+}
+
+void FancyText::setText(TextBuilder const& builder) {
+    vertices = std::move(builder.vertices);
+    finish_builder(builder); 
+}
+
+sf::FloatRect FancyText::getLocalBounds() const {
+    return bounds;
+}
+
+sf::FloatRect FancyText::getGlobalBounds() const {
+    return getTransform().transformRect(getLocalBounds());
+}
 
 void FancyText::finish_builder(TextBuilder const& builder) {
     // std::cout << "vertices count: " << vertices.getVertexCount() << '\n';

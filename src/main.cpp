@@ -72,7 +72,7 @@ int main() {
 
     sf::Text t("ow with another font", font_neo, 12);
 
-    text.setPosition(0.5f * (800 - text.bounds.width), 0.5f * (600 - text.bounds.height));
+    text.setPosition(0.5f * (800 - text.getLocalBounds().width), 0.5f * (600 - text.getLocalBounds().height));
     t.setPosition(0.5f * (800 - t.getLocalBounds().width), 350);
 
     while (window.isOpen()) {

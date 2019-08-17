@@ -10,12 +10,19 @@ class TextBuilder;
 class FancyText : public sf::Transformable, public sf::Drawable {
 public:
 
+    FancyText();
     FancyText(TextBuilder&& builder);
     FancyText(TextBuilder const& builder);
 
+    sf::FloatRect getLocalBounds() const;
+    sf::FloatRect getGlobalBounds() const;
+
+    void setText(TextBuilder&& builder);
+    void setText(TextBuilder const& builder);
+
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-//private:
+private:
 
     void finish_builder(TextBuilder const& builder);
     
