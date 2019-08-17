@@ -81,6 +81,30 @@ public:
 
     void append(sf::Uint32 unicode);
 
+    void set_font(sf::Font& font);
+    sf::Font const& get_font() const;
+
+    void set_character_size(unsigned int size);
+    unsigned int get_character_size() const;
+
+    void set_line_spacing(float factor);
+    float get_line_spacing() const;
+
+    void set_letter_spacing(float factor);
+    float get_letter_spacing() const;
+
+    void set_style(sf::Text::Style style);
+    sf::Text::Style get_style() const;
+
+    void set_fill_color(sf::Color color);
+    sf::Color get_fill_color() const;
+
+    void set_outline_color(sf::Color color);
+    sf::Color get_outline_color() const;
+
+    void set_outline_thickness(float thickness);
+    float get_outline_thickness() const;
+
 private:
 
     void force_add_underline();

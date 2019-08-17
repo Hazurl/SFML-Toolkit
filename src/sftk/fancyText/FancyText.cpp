@@ -133,6 +133,7 @@ void FancyText::finish_builder(TextBuilder const& builder) {
     bounds.top = builder.min_y;
     bounds.width = builder.max_x - builder.min_x;
     bounds.height = builder.max_y - builder.min_y;
+    // TODO: checks vertex buffer implementation
 /*
     // Update the vertex buffer if it is being used
     if (VertexBuffer::isAvailable())
@@ -256,10 +257,39 @@ void TextBuilder::update_texture() {
 
 }
 
-TextBuilder& operator <<(TextBuilder& builder, sf::Font& _font) {
-    // TODO: Store the maximum character size of the current line and the index of the first vertice of the current line
-    // TODO: Offset each vertices since the start of the line
+void TextBuilder::set_font(sf::Font& font) { *this << font; }
+sf::Font const& TextBuilder::get_font() const { return *font; }
 
+void TextBuilder::set_character_size(unsigned int size) { *this << txt::size(size); }
+unsigned int TextBuilder::get_character_size() const { return character_size; }
+
+void TextBuilder::set_line_spacing(float factor) { *this << txt::line_spacing(factor); }
+float TextBuilder::get_line_spacing() const { return line_spacing_factor; }
+
+void TextBuilder::set_letter_spacing(float factor) { *this << txt::spacing(factor); }
+float TextBuilder::get_letter_spacing() const { return letter_spacing_factor; }
+
+void TextBuilder::set_style(sf::Text::Style style) { *this << style; }
+sf::Text::Style TextBuilder::get_style() const {
+    return txt::styles(
+        is_bold ? sf::Text::Bold : sf::Text::Regular,
+        shear == SHEAR_ANGLE ? sf::Text::Italic : sf::Text::Regular,
+        is_underlined ? sf::Text::Underlined : sf::Text::Regular,
+        is_striketrough ? sf::Text::StrikeThrough : sf::Text::Regular
+    );
+}
+
+void TextBuilder::set_fill_color(sf::Color color) { *this << color; }
+sf::Color TextBuilder::get_fill_color() const { return fill_color; }
+
+void TextBuilder::set_outline_color(sf::Color color) { *this << txt::outline_color(color); }
+sf::Color TextBuilder::get_outline_color() const { return outline_color; }
+
+void TextBuilder::set_outline_thickness(float thickness) { *this << txt::outline_thickness(thickness); }
+float TextBuilder::get_outline_thickness() const { return outline_thickness; }
+
+
+TextBuilder& operator <<(TextBuilder& builder, sf::Font& _font) {
     if (builder.font == &_font) { return builder; }
 
     // If we're using the underlined style, add the last line
@@ -295,9 +325,6 @@ TextBuilder& operator <<(TextBuilder& builder, sf::Font& _font) {
 }
 
 TextBuilder& operator <<(TextBuilder& builder, txt::size_t _character_size) {
-    // TODO: Store the maximum character size of the current line and the index of the first vertice of the current line
-    // TODO: Offset each vertices since the start of the line
-
     if(builder.character_size == _character_size.size) return builder;
 
     // If we're using the underlined style, add the last line
