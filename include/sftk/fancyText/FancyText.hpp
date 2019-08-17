@@ -10,9 +10,9 @@ class TextBuilder;
 class FancyText : public sf::Transformable, public sf::Drawable {
 public:
 
-    FancyText();
-    FancyText(TextBuilder&& builder);
-    FancyText(TextBuilder const& builder);
+    FancyText(sf::VertexBuffer::Usage usage = sf::VertexBuffer::Static);
+    FancyText(TextBuilder&& builder, sf::VertexBuffer::Usage usage = sf::VertexBuffer::Static);
+    FancyText(TextBuilder const& builder, sf::VertexBuffer::Usage usage = sf::VertexBuffer::Static);
 
     sf::FloatRect get_local_bounds() const;
     sf::FloatRect get_global_bounds() const;
@@ -27,6 +27,7 @@ private:
     void finish_builder(TextBuilder const& builder);
     
     sf::VertexArray vertices;
+    sf::VertexBuffer vertices_buffer;
     sf::FloatRect bounds;
     // pair of texture + position at which it apply
     std::vector<std::pair<sf::Texture const*, std::size_t>> textures;

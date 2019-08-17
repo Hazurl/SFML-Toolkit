@@ -44,9 +44,9 @@ void add_glyph_quad(sf::VertexArray& vertices, sf::Vector2f position, sf::Color 
 
 namespace sftk {
 
-FancyText::FancyText() : vertices{}, bounds{} {}
-FancyText::FancyText(TextBuilder&& builder) : vertices{ std::move(builder.vertices) }, bounds{} { finish_builder(builder); }
-FancyText::FancyText(TextBuilder const& builder) : vertices{ builder.vertices }, bounds{} { finish_builder(builder); }
+FancyText::FancyText(sf::VertexBuffer::Usage usage) : vertices{}, vertices_buffer{sf::Triangles, usage}, bounds{} {}
+FancyText::FancyText(TextBuilder&& builder, sf::VertexBuffer::Usage usage) : vertices{ std::move(builder.vertices) }, vertices_buffer{sf::Triangles, usage}, bounds{} { finish_builder(builder); }
+FancyText::FancyText(TextBuilder const& builder, sf::VertexBuffer::Usage usage) : vertices{ builder.vertices }, vertices_buffer(sf::Triangles, usage), bounds{} { finish_builder(builder); }
 
 void FancyText::set_text(TextBuilder&& builder) {
     vertices = std::move(builder.vertices);
@@ -105,28 +105,22 @@ void FancyText::finish_builder(TextBuilder const& builder) {
     bounds.top = builder.min_y;
     bounds.width = builder.max_x - builder.min_x;
     bounds.height = builder.max_y - builder.min_y;
-    // TODO: checks vertex buffer implementation
-/*
+
     // Update the vertex buffer if it is being used
-    if (VertexBuffer::isAvailable())
+    if (sf::VertexBuffer::isAvailable())
     {
-        if (m_verticesBuffer.getVertexCount() != m_vertices.getVertexCount())
-            m_verticesBuffer.create(m_vertices.getVertexCount());
+        if (vertices_buffer.getVertexCount() != vertices.getVertexCount())
+            vertices_buffer.create(vertices.getVertexCount());
 
-        if (m_vertices.getVertexCount() > 0)
-            m_verticesBuffer.update(&m_vertices[0]);
-
-        if (m_outlineVerticesBuffer.getVertexCount() != m_outlineVertices.getVertexCount())
-            m_outlineVerticesBuffer.create(m_outlineVertices.getVertexCount());
-
-        if (m_outlineVertices.getVertexCount() > 0)
-            m_outlineVerticesBuffer.update(&m_outlineVertices[0]);
+        if (vertices.getVertexCount() > 0)
+            vertices_buffer.update(&vertices[0]);
     }
-*/
 }
 
 void FancyText::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     states.transform *= getTransform();
+
+    bool vertex_buffer_available = sf::VertexBuffer::isAvailable();
 
     for(auto it = std::begin(textures); it != std::end(textures); ++it) {
         auto[ txt, pos ] = *it;
@@ -135,7 +129,12 @@ void FancyText::draw(sf::RenderTarget& target, sf::RenderStates states) const {
         std::size_t next_pos{ next_it == std::end(textures) ? vertices.getVertexCount() : next_it->second };
 
         states.texture = txt;
-        target.draw(&vertices[pos], next_pos - pos, sf::Triangles, states);
+        if (vertex_buffer_available) {
+            target.draw(vertices_buffer, pos, next_pos - pos, states);
+        }
+        else {
+            target.draw(&vertices[pos], next_pos - pos, sf::Triangles, states);
+        }
     }
 }
 
