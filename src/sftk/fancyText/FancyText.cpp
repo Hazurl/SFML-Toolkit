@@ -52,22 +52,22 @@ FancyText::FancyText() : vertices{}, bounds{} {}
 FancyText::FancyText(TextBuilder&& builder) : vertices{ std::move(builder.vertices) }, bounds{} { finish_builder(builder); }
 FancyText::FancyText(TextBuilder const& builder) : vertices{ builder.vertices }, bounds{} { finish_builder(builder); }
 
-void FancyText::setText(TextBuilder&& builder) {
+void FancyText::set_text(TextBuilder&& builder) {
     vertices = std::move(builder.vertices);
     finish_builder(builder); 
 }
 
-void FancyText::setText(TextBuilder const& builder) {
+void FancyText::set_text(TextBuilder const& builder) {
     vertices = std::move(builder.vertices);
     finish_builder(builder); 
 }
 
-sf::FloatRect FancyText::getLocalBounds() const {
+sf::FloatRect FancyText::get_local_bounds() const {
     return bounds;
 }
 
-sf::FloatRect FancyText::getGlobalBounds() const {
-    return getTransform().transformRect(getLocalBounds());
+sf::FloatRect FancyText::get_global_bounds() const {
+    return getTransform().transformRect(get_local_bounds());
 }
 
 void FancyText::finish_builder(TextBuilder const& builder) {
