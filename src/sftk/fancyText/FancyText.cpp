@@ -6,8 +6,7 @@
 namespace {
 
 // Add an underline or strikethrough line to the vertex array
-void add_line(sf::VertexArray& vertices, float startX, float endX, float lineTop, sf::Color const& color, float offset, float thickness, float outline_thickness = 0)
-{
+void add_line(sf::VertexArray& vertices, float startX, float endX, float lineTop, sf::Color const& color, float offset, float thickness, float outline_thickness = 0) {
     auto top = std::floor(lineTop + offset - (thickness / 2) + 0.5f);
     auto bottom = top + std::floor(thickness + 0.5f);
 
@@ -20,11 +19,8 @@ void add_line(sf::VertexArray& vertices, float startX, float endX, float lineTop
 }
 
 // Add a glyph quad to the vertex array
-void add_glyph_quad(sf::VertexArray& vertices, sf::Vector2f position, sf::Color const& color, sf::Glyph const& glyph, float shear, float outline_thickness = 0)
-{
+void add_glyph_quad(sf::VertexArray& vertices, sf::Vector2f position, sf::Color const& color, sf::Glyph const& glyph, float shear, float outline_thickness = 0) {
     float padding = 1.0;
-
-    // std::cout << '(' << glyph.bounds.left << ", " << glyph.bounds.top << " ~ " << glyph.bounds.width << ", " << glyph.bounds.height << ')' << '\n';
 
     auto left   = glyph.bounds.left - padding;
     auto top    = glyph.bounds.top - padding;
@@ -71,30 +67,6 @@ sf::FloatRect FancyText::get_global_bounds() const {
 }
 
 void FancyText::finish_builder(TextBuilder const& builder) {
-    // std::cout << "vertices count: " << vertices.getVertexCount() << '\n';
-    // std::cout << "character_size: " << builder.character_size << '\n';
-    // std::cout << "line_spacing_factor: " << builder.line_spacing_factor << '\n';
-    // std::cout << "letter_spacing_factor: " << builder.letter_spacing_factor << '\n';
-    // std::cout << "outline_thickness: " << builder.outline_thickness << '\n';
-    // std::cout << "x: " << builder.x << '\n';
-    // std::cout << "y: " << builder.y << '\n';
-    // std::cout << "min_x: " << builder.min_x << '\n';
-    // std::cout << "max_x: " << builder.max_x << '\n';
-    // std::cout << "min_y: " << builder.min_y << '\n';
-    // std::cout << "max_y: " << builder.max_y << '\n';
-    // std::cout << "previous_char: " << builder.previous_char << '\n';
-    // std::cout << "shear: " << builder.shear << '\n';
-    // std::cout << "is_bold: " << builder.is_bold << '\n';
-    // std::cout << "is_underlined: " << builder.is_underlined << '\n';
-    // std::cout << "is_striketrough: " << builder.is_striketrough << '\n';
-    // std::cout << "underline_offset: " << builder.underline_offset << '\n';
-    // std::cout << "striketrough_offset: " << builder.striketrough_offset << '\n';
-    // std::cout << "line_thickness: " << builder.line_thickness << '\n';
-    // std::cout << "whitespace_width: " << builder.whitespace_width << '\n';
-    // std::cout << "max_line_spacing_since_start_of_line_multiplied: " << builder.max_line_spacing_since_start_of_line_multiplied << '\n';
-    // std::cout << "max_line_spacing_since_start_of_line: " << builder.max_line_spacing_since_start_of_line << '\n';
-    // std::cout << "letter_spacing: " << builder.letter_spacing << '\n';
-
     // TODO: regroup vertices with the same texture so the minimal amount of draw call are necessary
     for(auto const& history : builder.character_size_history) {
         textures.emplace_back(
@@ -161,8 +133,6 @@ void FancyText::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 
         auto next_it = it + 1;
         std::size_t next_pos{ next_it == std::end(textures) ? vertices.getVertexCount() : next_it->second };
-
-        // std::cout << "DRAW " << txt << ": " << pos << " -> " << next_pos << '\n';
 
         states.texture = txt;
         target.draw(&vertices[pos], next_pos - pos, sf::Triangles, states);
@@ -309,15 +279,10 @@ TextBuilder& operator <<(TextBuilder& builder, sf::Font& _font) {
 
     builder.font = &_font;
 
-    // std::cout << "\t\tADD TEXTURE " << &builder.font->getTexture(builder.character_size) << " at " << builder.vertices.getVertexCount() << '\n';
     builder.update_texture();
-
     builder.update_underline_offset();
-    // std::cout << "############# thickness: " << builder.line_thickness;
     builder.update_line_thickness();
-    // std::cout << " -> " << builder.line_thickness << '\n';
     builder.update_line_spacing();
-
     builder.update_whitespace_width();
     builder.update_strikethrough_offset();
 
@@ -345,11 +310,9 @@ TextBuilder& operator <<(TextBuilder& builder, txt::size_t _character_size) {
     builder.update_underline_offset();
     builder.update_line_thickness();
     builder.update_line_spacing();
-
     builder.update_whitespace_width();
     builder.update_strikethrough_offset();
 
-    // std::cout << "\t\tADD TEXTURE " << &builder.font->getTexture(builder.character_size) << " at " << builder.vertices.getVertexCount() << '\n';
     builder.update_texture();
     return builder;
 }
@@ -456,52 +419,22 @@ TextBuilder& operator <<(TextBuilder& builder, sf::Text::Style _style) {
 }
 
 void TextBuilder::append(sf::Uint32 unicode) {
-    // std::cout << "\n################\n";
-    // std::cout << "vertices count: " << vertices.getVertexCount() << '\n';
-    // std::cout << "character_size: " << character_size << '\n';
-    // std::cout << "line_spacing_factor: " << line_spacing_factor << '\n';
-    // std::cout << "letter_spacing_factor: " << letter_spacing_factor << '\n';
-    // std::cout << "outline_thickness: " << outline_thickness << '\n';
-    // std::cout << "x: " << x << '\n';
-    // std::cout << "y: " << y << '\n';
-    // std::cout << "min_x: " << min_x << '\n';
-    // std::cout << "max_x: " << max_x << '\n';
-    // std::cout << "min_y: " << min_y << '\n';
-    // std::cout << "max_y: " << max_y << '\n';
-    // std::cout << "previous_char: " << previous_char << '\n';
-    // std::cout << "shear: " << shear << '\n';
-    // std::cout << "is_bold: " << is_bold << '\n';
-    // std::cout << "is_underlined: " << is_underlined << '\n';
-    // std::cout << "is_striketrough: " << is_striketrough << '\n';
-    // std::cout << "underline_offset: " << underline_offset << '\n';
-    // std::cout << "striketrough_offset: " << striketrough_offset << '\n';
-    // std::cout << "line_thickness: " << line_thickness << '\n';
-    // std::cout << "whitespace_width: " << whitespace_width << '\n';
-    // std::cout << "max_line_spacing_since_start_of_line_multiplied: " << max_line_spacing_since_start_of_line_multiplied << '\n';
-    // std::cout << "max_line_spacing_since_start_of_line: " << max_line_spacing_since_start_of_line << '\n';
-    // std::cout << "letter_spacing: " << letter_spacing << '\n';
-
     if (unicode == L'\r') {
         return;
     }
 
     update_line_spacing();
 
-    // std::cout << ">> KERNING: x += " << font->getKerning(previous_char, unicode, character_size) << '\n';
     x += font->getKerning(previous_char, unicode, character_size);
 
     // If we're using the underlined style and there's a new line, draw a line
-    if (is_underlined && (unicode == L'\n' && previous_char != L'\n'))
-    {
-        // std::cout << "UNDERLINED!\n";
+    if (is_underlined && (unicode == L'\n' && previous_char != L'\n')) {
         force_add_underline();
         underline_start = 0;
     }
 
     // If we're using the strike through style and there's a new line, draw a line across all characters
-    if (is_striketrough && (unicode == L'\n' && previous_char != L'\n'))
-    {
-        // std::cout << "STRIKETROUGH!\n";
+    if (is_striketrough && (unicode == L'\n' && previous_char != L'\n')) {
         force_add_striketrough();
         striketrough_start = 0;
     }
@@ -509,15 +442,12 @@ void TextBuilder::append(sf::Uint32 unicode) {
     previous_char = unicode;
 
     // Handle special characters
-    if ((unicode == L' ') || (unicode == L'\n') || (unicode == L'\t'))
-    {
-        // std::cout << "WHITESPACE!\n";
+    if ((unicode == L' ') || (unicode == L'\n') || (unicode == L'\t')) {
         // Update the current bounds (min coordinates)
         min_x = std::min(min_x, x);
         min_y = std::min(min_y, y);
 
-        switch (unicode)
-        {
+        switch (unicode) {
             case L' ':  x += whitespace_width;     break;
             case L'\t': x += whitespace_width * 4; break;
             case L'\n': {
@@ -535,14 +465,12 @@ void TextBuilder::append(sf::Uint32 unicode) {
         max_x = std::max(max_x, x);
         max_y = std::max(max_y, y);
 
-        // Next glyph, no need to create a quad for whitespaces
+        // no need to create a quad for whitespaces
         return;
     }
 
     // Apply the outline
-    if (outline_thickness != 0)
-    {
-        // std::cout << "OUTLINE!\n";
+    if (outline_thickness != 0) {
         auto const& glyph = font->getGlyph(unicode, character_size, is_bold, outline_thickness);
 
         float left   = glyph.bounds.left;
@@ -560,17 +488,14 @@ void TextBuilder::append(sf::Uint32 unicode) {
         max_y = std::max(max_y, y + bottom - outline_thickness);
     }
 
-    // std::cout << "GETGLYPH(" << unicode << ", " << character_size << ", " << is_bold << ")\n";
     // Extract the current glyph's description
     auto const& glyph = font->getGlyph(unicode, character_size, is_bold);
 
-    // std::cout << "ADDGLYPHQUAD(" << x << ", " << y << ", " << (int)fill_color.r << ", " << (int)fill_color.g << ", " << (int)fill_color.b << ", " << shear << ")\n";
     // Add the glyph to the vertices
     add_glyph_quad(vertices, sf::Vector2f{ x, y }, fill_color, glyph, shear);
 
     // Update the current bounds with the non outlined glyph bounds
-    if (outline_thickness == 0)
-    {
+    if (outline_thickness == 0) {
         float left   = glyph.bounds.left;
         float top    = glyph.bounds.top;
         float right  = glyph.bounds.left + glyph.bounds.width;
