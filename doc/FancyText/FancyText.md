@@ -58,7 +58,7 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Window");
 
     sf::Font font;
-    if(!font.loadFromFile("./assets/font/Roboto-Regular.ttf")) {
+    if(!font.loadFromFile("/a/path/to/a/valid/texture.ttf")) {
         return 1;
     }
 
