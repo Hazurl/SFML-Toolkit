@@ -67,6 +67,17 @@ public:
 
 private:
 
+    void force_add_underline();
+    void force_add_striketrough();
+    void update_underline_offset();
+    void update_line_thickness();
+    void update_line_spacing();
+    void update_whitespace_width();
+    void update_strikethrough_offset();
+    void update_letter_spacing();
+    void update_texture();
+
+
     friend FancyText;
 
     sf::Font const* font;
