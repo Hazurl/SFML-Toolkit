@@ -595,6 +595,10 @@ TextBuilder& operator <<(TextBuilder& builder, std::wstring const& str) {
     return builder;
 }
 
+TextBuilder& operator <<(TextBuilder& builder, const wchar_t* str) {
+    return builder << std::wstring_view{ str };
+}
+
 TextBuilder& operator <<(TextBuilder& builder, std::wstring_view const& str) {
     for(auto unicode : str) {
         builder.append(static_cast<sf::Uint32>(unicode));

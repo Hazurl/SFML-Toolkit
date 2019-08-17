@@ -36,7 +36,7 @@ int main() {
         << "lo "sv
         << sf::Color::Red
         << 'W'
-        << (sf::Text::Style)(sf::Text::Underlined | sf::Text::StrikeThrough)
+        << sftk::txt::styles(sf::Text::Underlined, sf::Text::StrikeThrough)
         << "o"sv
         << sf::Text::Underlined
         << 'r'
@@ -52,7 +52,7 @@ int main() {
         << txt::outline_thickness(0)
         << "H"sv
         << sf::Text::Regular
-        << (sf::Text::Style)(sf::Text::Underlined | sf::Text::StrikeThrough)
+        << sftk::txt::styles(sf::Text::Underlined, sf::Text::StrikeThrough)
         << 'a'
         << txt::size(45)
         << txt::spacing(2)

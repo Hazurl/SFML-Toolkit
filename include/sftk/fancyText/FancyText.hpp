@@ -47,6 +47,13 @@ line_spacing_t line_spacing(float _factor);
 outline_color_t outline_color(sf::Color const& _color);
 outline_thickness_t outline_thickness(float _thickness);
 
+template<typename...Ts>
+sf::Text::Style styles(Ts... ts) {
+    return static_cast<sf::Text::Style>(
+        (sf::Text::Style::Regular | ... | sf::Text::Style{ ts })
+    );
+}
+
 };
 
 class TextBuilder {
@@ -68,6 +75,7 @@ public:
     friend TextBuilder& operator <<(TextBuilder& builder, const char* str);
     friend TextBuilder& operator <<(TextBuilder& builder, std::string_view const& str);
     friend TextBuilder& operator <<(TextBuilder& builder, std::wstring const& str);
+    friend TextBuilder& operator <<(TextBuilder& builder, const wchar_t* str);
     friend TextBuilder& operator <<(TextBuilder& builder, std::wstring_view const& str);
     friend TextBuilder& operator <<(TextBuilder& builder, sf::Uint32 unicode);
 
