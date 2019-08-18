@@ -115,6 +115,24 @@ int main() {
 }
 ```
 
+## Install
+
+### Static library
+
+```
+cd ./SFML-Toolkit
+make fancytext-static
+cp ./build/static/libsftkfancyText.a /where/you/want
+```
+
+### Shared library
+
+```
+cd ./SFML-Toolkit
+make fancytext-shared
+cp ./build/shared/libsftkfancyText.so /where/you/want
+```
+
 ## Members details
 
 **Summary**:
@@ -126,7 +144,7 @@ int main() {
     - [`txt::outline_thickness_t`, `txt::outline_thickness`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#txtoutline_thickness_t-txtoutline_thickness)
     - [`styles`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#styles)
 - [TextBuilder](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#textbuilder-1)
-    - [`Constructor`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#constructor)
+    - [Constructor](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#constructor)
     - [`append`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#append)
     - [`set_font`, `get_font`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#set_font-get_font)
     - [`set_character_size`, `get_character_size`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#set_character_size-get_character_size)
