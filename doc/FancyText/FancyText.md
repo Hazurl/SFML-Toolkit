@@ -157,7 +157,7 @@ text_builder << txt::line_spacing(1.5f);
 #### `txt::outline_color_t`, `txt::outline_color`
 
 `txt::outline_color_t` is used to notify the text builder to change color of the outline.
-You can construct it with the help of `outline_color_t outline_color(sf::Color const& _color)`. The default is opaque black. The `_color` parameter specify the new outline color of the text.
+You can construct it with the help of `outline_color_t outline_color(sf::Color _color)`. The default is opaque black. The `_color` parameter specify the new outline color of the text.
 
 ```cpp
 using namespace sftk;

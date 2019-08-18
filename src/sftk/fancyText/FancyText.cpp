@@ -152,7 +152,7 @@ line_spacing_t line_spacing(float _factor) {
     return line_spacing_t { _factor };
 }
 
-outline_color_t outline_color(sf::Color const& _color) {
+outline_color_t outline_color(sf::Color _color) {
     return outline_color_t { _color };
 }
 
