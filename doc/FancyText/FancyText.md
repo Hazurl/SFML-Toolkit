@@ -1,6 +1,6 @@
 # FancyText
 
-This system let you create texts containging multiple styles without manually messing around with kerning. It create the text on the go to minimize the overhead. This means you won't be able to query the strings and the styles used after building it.
+This system let you create texts containging multiple styles without manually messing around with kerning. It create the text on the go to minimize the memory overhead. This means you won't be able to query the strings and the styles used after building it.
 
 > ![Preview](https://i.imgur.com/qLl5l9R.png)
 > *[Result of the example](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/FancyText/FancyText.md#example)*
