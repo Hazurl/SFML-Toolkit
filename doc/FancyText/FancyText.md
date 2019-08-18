@@ -6,7 +6,7 @@ This system let you create texts containging multiple styles without manually me
 - [TextBuilder](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/FancyText/FancyText.md#textbuilder)
 - [FancyText](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/FancyText/FancyText.md#fancytext)
 - [Example](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/FancyText/FancyText.md#example)
-- [Members details](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/FancyText/FancyText.md#example)
+- [Members details](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#members-details)
 
 ## TextBuilder
 
@@ -117,6 +117,32 @@ int main() {
 
 ## Members details
 
+**Summary**:
+- [`txt` namespace](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#txt-namespace)
+    - [`txt::size_t`, `txt::size`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#txtsize_t-txtsize)
+    - [`txt::spacing_t`, `txt::spacing`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#txtspacing_t-txtspacing)
+    - [`txt::line_spacing_t`, `txt::line_spacing`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#txtline_spacing_t-txtline_spacing)
+    - [`txt::outline_color_t`, `txt::outline_color`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#txtoutline_color_t-txtoutline_color)
+    - [`txt::outline_thickness_t`, `txt::outline_thickness`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#txtoutline_thickness_t-txtoutline_thickness)
+    - [`styles`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#styles)
+- [TextBuilder](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#textbuilder-1)
+    - [`Constructor`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#constructor)
+    - [`append`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#append)
+    - [`set_font`, `get_font`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#set_font-get_font)
+    - [`set_character_size`, `get_character_size`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#set_character_size-get_character_size)
+    - [`set_line_spacing`, `get_line_spacing`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#set_line_spacing-get_line_spacing)
+    - [`set_letter_spacing`, `get_letter_spacing`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#set_letter_spacing-get_letter_spacing)
+    - [`set_style`, `get_style`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#set_style-get_style)
+    - [`set_fill_color`, `get_fill_color`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#set_fill_color-get_fill_color)
+    - [`set_outline_color`, `get_outline_color`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#set_outline_color-get_outline_color)
+    - [`set_outline_thickness`, `get_outline_thickness`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#set_outline_thickness-get_outline_thickness)
+    - [`operator<<` with string types](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#operator-with-string-types)
+- [FancyText](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#fancytext-2)
+    - [Constructor](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#consructor)
+    - [`get_local_bounds`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#get_local_bounds)
+    - [`get_global_bounds`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#get_global_bounds)
+    - [`set_text`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#set_text)
+
 ### `txt` namespace
 
 #### `txt::size_t`, `txt::size`
@@ -187,6 +213,11 @@ This function helps you join multiple style. It has the same effect as `|` the s
 
 #### Constructor
 
+```cpp
+TextBuilder(sf::Font const& font);
+```
+Construct an empty builder with the given font.
+
 #### `append`
 
 ```cpp
@@ -223,6 +254,8 @@ unsigned int get_character_size() const;
 ```
 Query the size currently in use.
 
+> See also [txt::size](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#txtsize_t-txtsize)
+
 #### `set_line_spacing`, `get_line_spacing`
 
 ```cpp
@@ -235,6 +268,8 @@ Set the line spacing factor. The default line spacing is 1. The `factor` paramet
 float get_line_spacing() const;
 ```
 Query the line spacing factor currently in use.
+
+> See also [txt::line_spacing](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#txtline_spacing_t-txtline_spacing)
 
 #### `set_letter_spacing`, `get_letter_spacing`
 
@@ -249,6 +284,8 @@ float get_letter_spacing() const;
 ```
 Query the letter spacing factor currently in use.
 
+> See also [txt::spacing](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#txtspacing_t-txtspacing)
+
 #### `set_style`, `get_style`
 
 ```cpp
@@ -262,6 +299,8 @@ Each call will override the previous style used. if you wants multiple style at 
 sf::Text::Style get_style() const;
 ```
 Query the styles currently in use.
+
+> See also [txt::styles](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#styles)
 
 #### `set_fill_color`, `get_fill_color`
 
@@ -289,6 +328,8 @@ sf::Color get_outline_color() const;
 ```
 Query the color currently in use.
 
+> See also [txt::outline_color](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#txtoutline_color_t-txtoutline_color)
+
 #### `set_outline_thickness`, `get_outline_thickness`
 
 ```cpp
@@ -302,6 +343,8 @@ float get_outline_thickness() const;
 ```
 Query the thickness currently in use.
 
+> See also [txt::outline_thickness](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#txtoutline_thickness_t-txtoutline_thickness)
+
 #### `operator<<` with string types
 
 For ease of use, you can append the folowing strings using the `operator<<`:
@@ -313,11 +356,13 @@ For ease of use, you can append the folowing strings using the `operator<<`:
 - `const wchar_t*`
 - `sf::String`
 
+> See also [append](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#append)
+
 ### FancyText
 
 `FancyText` implements [`sf:Transformable`](https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1Transformable.php) and [`sf::Drawable`](https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1Drawable.php) from SFML.
 
-#### Consructor
+#### Constructor
 
 ```cpp
 FancyText(sf::VertexBuffer::Usage usage = sf::VertexBuffer::Static);
@@ -352,5 +397,5 @@ void set_text(TextBuilder&& builder);
 void set_text(TextBuilder const& builder);
 ```
 
-Similar to the constructors, the first version will leave the builder empty and the other will deep copy the vertices.
+Similar to the [constructors](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#consructor), the first version will leave the builder empty and the other will deep copy the vertices.
 In both case the new vertices will override the previous text.
