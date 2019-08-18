@@ -42,4 +42,9 @@ std::ostream& operator<<(std::ostream& os, sf::Vector3<T> const& v) {
     return os << '(' << v.x << ", " << v.y << ", " << v.z << ')';
 }
 
+template<typename T>
+std::ostream& operator<<(std::ostream& os, sf::Rect<T> const& r) {
+    return os << '(' << r.left << ", " << r.top << " ~ " << r.width << ", " << r.height << ')';
+}
+
 }

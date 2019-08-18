@@ -82,6 +82,10 @@ SRC_MAIN := main.cpp
 ##### MODULES
 #####
 
+#
+# [Event]
+#
+
 EVENT_SRC := sftk/eventListener/EventListener.cpp
 EVENT_MAIN := example/eventListener.cpp
 
@@ -94,6 +98,10 @@ EVENT_OBJ_EXE := $(EVENT_OBJ_MAIN) $(EVENT_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLD
 EVENT_OBJ_SHARED := $(EVENT_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FOLDER)/%.o)
 EVENT_OBJ_STATIC := $(EVENT_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
 
+#
+# [Ressource]
+#
+
 RESSOURCE_SRC := 
 RESSOURCE_MAIN := example/ressource.cpp
 
@@ -105,6 +113,22 @@ RESSOURCE_OBJ_MAIN := $(RESSOURCE_MAIN:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SR
 RESSOURCE_OBJ_EXE := $(RESSOURCE_OBJ_MAIN) $(RESSOURCE_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o) 
 RESSOURCE_OBJ_SHARED := $(RESSOURCE_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FOLDER)/%.o)
 RESSOURCE_OBJ_STATIC := $(RESSOURCE_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
+
+#
+# [Fancy Text]
+#
+
+FANCY_TEXT_SRC := sftk/fancyText/FancyText.cpp
+FANCY_TEXT_MAIN := example/fancyText.cpp
+
+TARGET_FANCY_TEXT_EXE :=$(BUILD_EXE_FOLDER)/fancyText_example.cpp
+TARGET_FANCY_TEXT_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkfancyText.so
+TARGET_FANCY_TEXT_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkfancyText.a
+
+FANCY_TEXT_OBJ_MAIN := $(FANCY_TEXT_MAIN:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o)
+FANCY_TEXT_OBJ_EXE := $(FANCY_TEXT_OBJ_MAIN) $(FANCY_TEXT_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o) 
+FANCY_TEXT_OBJ_SHARED := $(FANCY_TEXT_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FOLDER)/%.o)
+FANCY_TEXT_OBJ_STATIC := $(FANCY_TEXT_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
 
 #####
 ##### FLAGS
@@ -368,6 +392,24 @@ run-ressource:
 	@$(call _special,EXECUTING $(TARGET_RESSOURCE_EXE)...)
 	@$(TARGET_RESSOURCE_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
 
+fancytext:
+	@$(call _header,BUILDING FANCY TEXT EXAMPLE...)
+	@make $(TARGET_FANCY_TEXT_EXE)
+
+fancytext-shared:
+	@$(call _header,BUILDING SHARED FANCY TEXT...)
+	@make $(TARGET_FANCY_TEXT_SHARED)
+
+fancytext-static:
+	@$(call _header,BUILDING STATIC FANCY TEXT...)
+	@make $(TARGET_FANCY_TEXT_STATIC)
+
+run-fancytext: 
+	@make fancytext
+	@echo
+	@$(call _special,EXECUTING $(TARGET_FANCY_TEXT_EXE)...)
+	@$(TARGET_FANCY_TEXT_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
+
 $(_BUILD_DIR):
 	@mkdir -p $(_BUILD_DIR)
 
@@ -445,6 +487,22 @@ $(TARGET_RESSOURCE_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(RESSOURCE_OBJ_SHARED
 	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_RESSOURCE_SHARED) $(RESSOURCE_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
 	@$(call _header,Shared library done ($(TARGET_RESSOURCE_SHARED)))
 
+
+
+$(TARGET_FANCY_TEXT_EXE): $(_BUILD_DIR) $(LIB_TO_BUILD) $(FANCY_TEXT_OBJ_EXE)
+	@$(call _sub-header,Linking...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) $(FANCY_TEXT_OBJ_EXE) -o "$@" $(LIBS_PATH) $(LIBS)
+	@$(call _header,Executable done ($(FANCY_TEXT_OBJ_EXE)))
+
+$(TARGET_FANCY_TEXT_STATIC): $(_BUILD_DIR) $(LIB_TO_BUILD) $(FANCY_TEXT_OBJ_STATIC)
+	@$(call _sub-header,Archiving...)
+	@$(SXX) $(STATIC_LINK_FLAG) $(TARGET_FANCY_TEXT_STATIC) $(FANCY_TEXT_OBJ_STATIC)
+	@$(call _header,Static library done ($(TARGET_FANCY_TEXT_STATIC)))
+
+$(TARGET_FANCY_TEXT_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(FANCY_TEXT_OBJ_SHARED)
+	@$(call _sub-header,Shared library creation...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_FANCY_TEXT_SHARED) $(FANCY_TEXT_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
+	@$(call _header,Shared library done ($(TARGET_FANCY_TEXT_SHARED)))
 
 # Just to avoid file without headers
 %$(EXT_INC_FILE):

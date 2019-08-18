@@ -1,44 +1,88 @@
 #include <SFML/Graphics.hpp>
 
 #include <sftk/ressource/Ressource.hpp>
+#include <sftk/fancyText/FancyText.hpp>
+#include <sftk/print/Printer.hpp>
 
 #include <iostream>
 
 int main() {
-/*
-    using sftk::operator<<;
-
-    std::cout << sf::Vector2f(42.42f, 1337) << '\n';
-    std::cout << sf::Vector2i(42, -1337) << '\n';
-    std::cout << sf::Vector2u(42, 1337) << '\n';
-
-    std::cout << [] () { auto s = sf::CircleShape(12); s.setPosition({10, -20}); return s; }() << '\n';
-*/
-
-
-    auto load = sftk::backup( // backup execute the first loader, if it fail it execute the second one
-        sftk::load_from_file<sf::Texture>("non_existing_file.wtf"),
-        sftk::load_from_file<sf::Texture>("../brick-breaker/res/img/bw_brick_soft.png")
-    );
-
-    sftk::Ressource<sf::Texture> res(load);
-    sf::Sprite s;
-    auto t_ = res.get(); // if you delete this line, the texture will bed destroyed since the only reference to it will go out of scope
-    // in order to not run into this behaviour, if you use a sprite (that need a reference to the texture), 
-    // you must keep the handler returned by sftk::Ressource<T>::get
-    {
-        auto t = res.get();
-        s.setTexture(*t);
-    } // `t` goes out of scope, it it's the only handler on this ressource, it will unload it 
-
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Window");
+
+    using namespace sftk;
+
+    sf::Font font_roboto;
+    if (!font_roboto.loadFromFile("./assets/font/Roboto-Regular.ttf")) {
+        return 1;
+    }
+
+    sf::Font font_neo;
+    if (!font_neo.loadFromFile("./assets/font/neoletters.ttf")) {
+        return 1;
+    }
+
+    using namespace std::string_view_literals;
+
+    sftk::FancyText text = sftk::TextBuilder{ font_roboto }
+    /*
+        << txt::size(45)
+        << "OO"sv
+        << txt::size(12)
+        << "OO"sv
+    */
+    
+        << "Hel"sv
+        << sf::Text::StrikeThrough
+        << "lo "sv
+        << sf::Color::Red
+        << 'W'
+        << sftk::txt::styles(sf::Text::Underlined, sf::Text::StrikeThrough)
+        << "o"sv
+        << sf::Text::Underlined
+        << 'r'
+        << sf::Text::Bold
+        << "ld"sv
+        << (sf::Text::Style)(sf::Text::Italic | sf::Text::Bold)
+        << "! My n"sv
+        << txt::outline_color(sf::Color::White)
+        << txt::outline_thickness(2)
+        << "ame is\n"sv
+        << txt::size(30)
+        << sf::Color::Blue
+        << txt::outline_thickness(0)
+        << "H"sv
+        << sf::Text::Regular
+        << sftk::txt::styles(sf::Text::Underlined, sf::Text::StrikeThrough)
+        << 'a'
+        << txt::size(45)
+        << txt::spacing(2)
+        << "zu"sv
+        << sf::Text::Regular
+        << "rl"sv
+        << font_neo
+        << " and n"sv
+        << txt::size(12)
+        << "ow with another font\n"sv
+        << txt::spacing(1)
+        << txt::line_spacing(2)
+        << "ow with another font\n"sv
+        << txt::line_spacing(1)
+        << "ow with another font"sv
+        ;
+
+    sf::Text t("ow with another font", font_neo, 12);
+
+    text.setPosition(0.5f * (800 - text.get_local_bounds().width), 0.5f * (600 - text.get_local_bounds().height));
+    t.setPosition(0.5f * (800 - t.getLocalBounds().width), 350);
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event))
             if (event.type == sf::Event::Closed)
                 window.close();
         window.clear();
-        window.draw(s);
+        window.draw(text);
+        //window.draw(t);
         window.display();
     }
 
