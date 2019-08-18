@@ -152,7 +152,7 @@ private:
     float striketrough_start{ 0.0f };
 
     std::size_t vertex_indice_start_of_line{ 0 };
-    float max_line_spacing_since_start_of_line{ 0 };
+    float max_line_spacing_since_start_of_line{ 0.0f };
     float max_line_spacing_since_start_of_line_multiplied{ 0.0f };
 
     float whitespace_width{ 0.0f };

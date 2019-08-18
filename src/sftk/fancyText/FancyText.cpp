@@ -1,7 +1,6 @@
 #include <sftk/fancyText/FancyText.hpp>
 
 #include <cmath>
-#include <iostream>
 
 namespace {
 
@@ -169,7 +168,6 @@ TextBuilder::TextBuilder(sf::Font const& _font)
     : font{ &_font }
     , underline_offset{ font->getUnderlinePosition(character_size) }
     , line_thickness{ font->getUnderlineThickness(character_size) }
-    , max_line_spacing_since_start_of_line{ font->getLineSpacing(character_size) }
     , vertices{ sf::PrimitiveType::Triangles }
 {
     update_whitespace_width();
@@ -284,7 +282,6 @@ TextBuilder& operator <<(TextBuilder& builder, sf::Font& _font) {
     builder.update_texture();
     builder.update_underline_offset();
     builder.update_line_thickness();
-    builder.update_line_spacing();
     builder.update_whitespace_width();
     builder.update_strikethrough_offset();
 
@@ -311,7 +308,6 @@ TextBuilder& operator <<(TextBuilder& builder, txt::size_t _character_size) {
     builder.character_size = _character_size.size;
     builder.update_underline_offset();
     builder.update_line_thickness();
-    builder.update_line_spacing();
     builder.update_whitespace_width();
     builder.update_strikethrough_offset();
 
