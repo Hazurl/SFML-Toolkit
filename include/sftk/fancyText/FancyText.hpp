@@ -45,6 +45,7 @@ struct outline_thickness_t { float thickness; };
 size_t size(unsigned int _size);
 spacing_t spacing(float _factor);
 line_spacing_t line_spacing(float _factor);
+// TODO: remove const&
 outline_color_t outline_color(sf::Color const& _color);
 outline_thickness_t outline_thickness(float _thickness);
 

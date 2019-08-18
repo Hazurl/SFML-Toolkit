@@ -5,6 +5,8 @@ This system let you create texts containging multiple styles without manually me
 **Summary**
 - [TextBuilder](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/FancyText/FancyText.md#textbuilder)
 - [FancyText](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/FancyText/FancyText.md#fancytext)
+- [Example](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/FancyText/FancyText.md#example)
+- [Members details](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/FancyText/FancyText.md#example)
 
 ## TextBuilder
 
@@ -112,3 +114,243 @@ int main() {
 
 }
 ```
+
+## Members details
+
+### `txt` namespace
+
+#### `txt::size_t`, `txt::size`
+
+`txt::size_t` is used to notify the text builder to change the size of the characters.
+You can construct it with the help of `size_t size(unsigned int _size)`.
+The default size is 30. The `_size` parameter specify the size in pixels.
+
+```cpp
+using namespace sftk;
+TextBuilder text_builder{ ... };
+text_builder << txt::size(15);
+```
+
+#### `txt::spacing_t`, `txt::spacing`
+
+`txt::spacing_t` is used to notify the text builder to change the letter spacing between the characters.
+You can construct it with the help of `spacing_t spacing(float _factor)`.
+The default letter spacing factor is 1. The `_factor` parameter specify the new spacing calculated from the font metrics and the character size. A factor below 1 bring characters closer to each other.
+
+```cpp
+using namespace sftk;
+TextBuilder text_builder{ ... };
+text_builder << txt::spacing(2.0f);
+```
+
+#### `txt::line_spacing_t`, `txt::line_spacing`
+
+`txt::line_spacing_t` is used to notify the text builder to change the line spacing factor.
+You can construct it with the help of `line_spacing_t line_spacing(float _factor)`. The default line spacing is 1. The `_factor` parameter specify the new line spacing proportional to the character size.
+
+```cpp
+using namespace sftk;
+TextBuilder text_builder{ ... };
+text_builder << txt::line_spacing(1.5f);
+```
+
+#### `txt::outline_color_t`, `txt::outline_color`
+
+`txt::outline_color_t` is used to notify the text builder to change color of the outline.
+You can construct it with the help of `outline_color_t outline_color(sf::Color const& _color)`. The default is opaque black. The `_color` parameter specify the new outline color of the text.
+
+```cpp
+using namespace sftk;
+TextBuilder text_builder{ ... };
+text_builder << txt::outline_color(sf::Color::Red);
+```
+
+#### `txt::outline_thickness_t`, `txt::outline_thickness`
+
+`txt::outline_thickness_t` is used to notify the text builder to change the size of the outline.
+You can construct it with the help of `outline_thickness_t outline_thickness(float _thickness)`. The default thickness is 0. The `_thickness` parameter specify the thickness in pixels. Negative value will cause distorded rendering.
+
+```cpp
+using namespace sftk;
+TextBuilder text_builder{ ... };
+text_builder << txt::outline_thickness(3.0f);
+```
+
+#### `styles`
+```cpp
+template<typename...Ts>
+sf::Text::Style styles(Ts... ts);
+```
+This function helps you join multiple style. It has the same effect as `|` the style together and cast them back to `sf::Text::Style`.
+
+### TextBuilder
+
+#### Constructor
+
+#### `append`
+
+```cpp
+void append(sf::Uint32 unicode);
+TextBuilder& operator <<(TextBuilder& builder, sf::Uint32 unicode);
+```
+Append a single unicode character.
+`\r` is not supported and will leave the text unchanged.
+
+#### `set_font`, `get_font`
+
+```cpp
+void set_font(sf::Font& font);
+TextBuilder& operator <<(TextBuilder& builder, sf::Font& font)
+```
+Set the font of the text for the future characters.
+
+```cpp
+sf::Font const& get_font() const;
+```
+Query the font currently in use.
+
+#### `set_character_size`, `get_character_size`
+
+```cpp
+void set_character_size(unsigned int size);
+TextBuilder& operator <<(TextBuilder& builder, txt::size_t character_size);
+```
+Set the character size for the future characters.
+The default size is 30. The `size` parameter specify the size in pixels.
+
+```cpp
+unsigned int get_character_size() const;
+```
+Query the size currently in use.
+
+#### `set_line_spacing`, `get_line_spacing`
+
+```cpp
+void set_line_spacing(float factor);
+TextBuilder& operator <<(TextBuilder& builder, txt::line_spacing_t line_spacing);
+```
+Set the line spacing factor. The default line spacing is 1. The `factor` parameter specify the new line spacing proportional to the character size.
+
+```cpp
+float get_line_spacing() const;
+```
+Query the line spacing factor currently in use.
+
+#### `set_letter_spacing`, `get_letter_spacing`
+
+```cpp
+void set_letter_spacing(float factor);
+TextBuilder& operator <<(TextBuilder& builder, txt::spacing_t spacing);
+```
+Set the letter spacing between the characters. The default letter spacing factor is 1. The `factor` parameter specify the new spacing calculated from the font metrics and the character size. A factor below 1 bring characters closer to each other.
+
+```cpp
+float get_letter_spacing() const;
+```
+Query the letter spacing factor currently in use.
+
+#### `set_style`, `get_style`
+
+```cpp
+void set_style(sf::Text::Style style);
+TextBuilder& operator <<(TextBuilder& builder, sf::Text::Style style);
+```
+Set the style for the next characters. The default is `sf::Text::Style::Regular`.
+Each call will override the previous style used. if you wants multiple style at once, `|` them together: `static_cast<sf::Text::Style>(sf::Text::Style::Underlined, sf::Text::Style::Italic)`.
+
+```cpp
+sf::Text::Style get_style() const;
+```
+Query the styles currently in use.
+
+#### `set_fill_color`, `get_fill_color`
+
+```cpp
+void set_fill_color(sf::Color color);
+TextBuilder& operator <<(TextBuilder& builder, sf::Color color);
+```
+Set the color of the text. The default is opaque white.  
+
+```cpp
+sf::Color get_fill_color() const;
+```
+Query the color currently in use.
+
+#### `set_outline_color`, `get_outline_color`
+
+```cpp
+void set_outline_color(sf::Color color);
+TextBuilder& operator <<(TextBuilder& builder, txt::outline_color_t outline_color);
+```
+Set the color of the outline. The default is opaque black. The `color` parameter specify the new outline color of the text.
+
+```cpp
+sf::Color get_outline_color() const;
+```
+Query the color currently in use.
+
+#### `set_outline_thickness`, `get_outline_thickness`
+
+```cpp
+void set_outline_thickness(float thickness);
+TextBuilder& operator <<(TextBuilder& builder, txt::outline_thickness_t outline_thickness);
+```
+Set the thickness of the outline. The default thickness is 0. The `thickness` parameter specify the thickness in pixels. Negative value will cause distorded rendering.
+
+```cpp
+float get_outline_thickness() const;
+```
+Query the thickness currently in use.
+
+#### `operator<<` with string types
+
+For ease of use, you can append the folowing strings using the `operator<<`:
+- `std::string`
+- `std::wstring`
+- `std::string_view`
+- `std::wstring_view`
+- `const char*`
+- `const wchar_t*`
+- `sf::String`
+
+### FancyText
+
+`FancyText` implements [`sf:Transformable`](https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1Transformable.php) and [`sf::Drawable`](https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1Drawable.php) from SFML.
+
+#### Consructor
+
+```cpp
+FancyText(sf::VertexBuffer::Usage usage = sf::VertexBuffer::Static);
+FancyText(TextBuilder&& builder, sf::VertexBuffer::Usage usage = sf::VertexBuffer::Static);
+FancyText(TextBuilder const& builder, sf::VertexBuffer::Usage usage = sf::VertexBuffer::Static);
+```
+
+All three constructor takes an optional parameter `usage`. It's used to initialize the internal vertex buffer (To get details about the values and their meaning checks [SFML's documentation](https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1VertexBuffer.php#a3a531528684e63ecb45edd51282f5cb7)).
+The first constructor initialize the object with an empty text.
+The second constructor will moves the vertices from the text builder making it empty.
+The third constructor will copy the vertices, the builder will still contains the vertices for future uses.
+
+#### `get_local_bounds`
+
+```cpp
+sf::FloatRect get_local_bounds() const;
+```
+Get the local bounding rectangle of the entity. The returned rectangle is in local coordinates, which means that it ignores the transformations (translation, rotation, scale, ...) that are applied to the entity. In other words, this function returns the bounds of the entity in the entity's coordinate system.
+
+#### `get_global_bounds`
+
+```cpp
+sf::FloatRect get_global_bounds() const;
+```
+
+Get the global bounding rectangle of the entity. The returned rectangle is in global coordinates, which means that it takes into account the transformations (translation, rotation, scale, ...) that are applied to the entity. In other words, this function returns the bounds of the text in the global 2D world's coordinate system.
+
+#### `set_text`
+
+```cpp
+void set_text(TextBuilder&& builder);
+void set_text(TextBuilder const& builder);
+```
+
+Similar to the constructors, the first version will leave the builder empty and the other will deep copy the vertices.
+In both case the new vertices will override the previous text.
