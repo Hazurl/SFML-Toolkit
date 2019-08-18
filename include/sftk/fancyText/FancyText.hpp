@@ -135,6 +135,8 @@ private:
     float max_x{ 0.0f };
     float min_y{ 0.0f };
     float max_y{ 0.0f };
+    float min_y_line{ 0.0f };
+    float max_y_line{ 0.0f };
 
     sf::Uint32 previous_char{ L'\0' };
 

@@ -100,11 +100,14 @@ void FancyText::finish_builder(TextBuilder const& builder) {
             add_line(vertices, builder.striketrough_start, builder.x, builder.y + max_line_spacing_since_start_of_line_multiplied, builder.outline_color, builder.striketrough_offset, builder.line_thickness, builder.outline_thickness);
     }
 
+    auto min_y = std::min(builder.min_y, builder.min_y_line + max_line_spacing_since_start_of_line_multiplied);
+    auto max_y = std::max(builder.max_y, builder.max_y_line + max_line_spacing_since_start_of_line_multiplied);
+
     // Update the bounding rectangle
     bounds.left = builder.min_x;
-    bounds.top = builder.min_y;
+    bounds.top = min_y;
     bounds.width = builder.max_x - builder.min_x;
-    bounds.height = builder.max_y - builder.min_y;
+    bounds.height = max_y - min_y;
 
     // Update the vertex buffer if it is being used
     if (sf::VertexBuffer::isAvailable())
@@ -442,16 +445,18 @@ void TextBuilder::append(sf::Uint32 unicode) {
 
     // Handle special characters
     if ((unicode == L' ') || (unicode == L'\n') || (unicode == L'\t')) {
-        // Update the current bounds (min coordinates)
-        min_x = std::min(min_x, x);
-        min_y = std::min(min_y, y);
-
         switch (unicode) {
             case L' ':  x += whitespace_width;     break;
             case L'\t': x += whitespace_width * 4; break;
             case L'\n': {
                 y += max_line_spacing_since_start_of_line_multiplied; 
                 x = 0; 
+
+                min_y = std::max(min_y, min_y_line + max_line_spacing_since_start_of_line_multiplied);
+                max_y = std::max(max_y, max_y_line + max_line_spacing_since_start_of_line_multiplied);
+
+                min_y_line = max_y_line = 0;
+
                 for(; vertex_indice_start_of_line < vertices.getVertexCount(); ++vertex_indice_start_of_line) {
                     vertices[vertex_indice_start_of_line].position.y += max_line_spacing_since_start_of_line_multiplied;
                 }
@@ -460,9 +465,9 @@ void TextBuilder::append(sf::Uint32 unicode) {
             }
         }
 
-        // Update the current bounds (max coordinates)
+        // Update the current bounds
+        min_x = std::min(min_x, x);
         max_x = std::max(max_x, x);
-        max_y = std::max(max_y, y);
 
         // no need to create a quad for whitespaces
         return;
@@ -483,8 +488,8 @@ void TextBuilder::append(sf::Uint32 unicode) {
         // Update the current bounds with the outlined glyph bounds
         min_x = std::min(min_x, x + left   - shear * bottom - outline_thickness);
         max_x = std::max(max_x, x + right  - shear * top    - outline_thickness);
-        min_y = std::min(min_y, y + top    - outline_thickness);
-        max_y = std::max(max_y, y + bottom - outline_thickness);
+        min_y_line = std::min(min_y_line, y + top    - outline_thickness);
+        max_y_line = std::max(max_y_line, y + bottom - outline_thickness);
     }
 
     // Extract the current glyph's description
@@ -502,8 +507,8 @@ void TextBuilder::append(sf::Uint32 unicode) {
 
         min_x = std::min(min_x, x + left  - shear * bottom);
         max_x = std::max(max_x, x + right - shear * top);
-        min_y = std::min(min_y, y + top);
-        max_y = std::max(max_y, y + bottom);
+        min_y_line = std::min(min_y_line, y + top);
+        max_y_line = std::max(max_y_line, y + bottom);
     }
 
     // Advance to the next character
