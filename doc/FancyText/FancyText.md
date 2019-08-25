@@ -158,6 +158,7 @@ cp ./build/shared/libsftkfancyText.so /where/you/want
     - [`set_outline_color`, `get_outline_color`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#set_outline_color-get_outline_color)
     - [`set_outline_thickness`, `get_outline_thickness`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#set_outline_thickness-get_outline_thickness)
     - [`operator<<` with string types](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#operator-with-string-types)
+    - [`get_current_position`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#get_current_position)
 - [FancyText](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#fancytext-2)
     - [Constructor](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#consructor)
     - [`get_local_bounds`](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#get_local_bounds)
@@ -378,6 +379,23 @@ For ease of use, you can append the folowing strings using the `operator<<`:
 - `sf::String`
 
 > See also [append](https://github.com/Hazurl/SFML-Toolkit/blob/fancy-text/doc/FancyText/FancyText.md#append)
+
+#### `get_current_position`
+
+```cpp
+sf::Vector2f get_current_position() const;
+```
+Get the position of the next character, since the Y coordinates can be changed later if you modify the character size you need to set it to its maximum then query the position (and set back the size to what it was before).
+
+> **Example**:
+> ```cpp
+> sftk::TextBuilder builder{ font };
+> builder << sftk::size(45);
+> auto first_position = builder.get_current_position();
+> builder << sftk::size(30) << "Hello " << sftk::size(45) << "World !";
+> // first_position is the origin of 'H'
+> ```
+> In this example the maximum size is `45` but at the moment the position query is called the maximum is only 30 (the default size) so we need to temporarily set the size to 45.
 
 ### FancyText
 

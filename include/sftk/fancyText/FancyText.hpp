@@ -106,6 +106,8 @@ public:
     void set_outline_thickness(float thickness);
     float get_outline_thickness() const;
 
+    sf::Vector2f get_current_position() const;
+
 private:
 
     void force_add_underline();

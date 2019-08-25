@@ -258,6 +258,11 @@ sf::Color TextBuilder::get_outline_color() const { return outline_color; }
 void TextBuilder::set_outline_thickness(float thickness) { *this << txt::outline_thickness(thickness); }
 float TextBuilder::get_outline_thickness() const { return outline_thickness; }
 
+sf::Vector2f TextBuilder::get_current_position() const {
+    auto current_max_line_spacing_since_start_of_line = std::max(max_line_spacing_since_start_of_line, font->getLineSpacing(character_size));
+    auto current_max_line_spacing_since_start_of_line_multiplied = current_max_line_spacing_since_start_of_line * line_spacing_factor;
+    return { x, y + current_max_line_spacing_since_start_of_line_multiplied };
+}
 
 TextBuilder& operator <<(TextBuilder& builder, sf::Font& _font) {
     if (builder.font == &_font) { return builder; }
