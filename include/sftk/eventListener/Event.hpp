@@ -7,7 +7,7 @@ namespace event {
 
 #define MAKE_EVENT(name)\
 struct name {\
-    name(sf::Window& window) : window(window) {}\
+    name(sf::Window& _window) : window(_window) {}\
     sf::Window& window;\
 }
 
