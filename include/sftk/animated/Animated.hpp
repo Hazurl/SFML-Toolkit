@@ -111,6 +111,10 @@ struct Animated {
         return is_animated() ? interp(start, end, time / duration) : end;
     }
 
+    explicit operator T() const {
+        return current();
+    }
+
     void animate(T final_position, time_t animation_duration, interpolation_t interpolation_function) {
         interp = interpolation_function;
 
