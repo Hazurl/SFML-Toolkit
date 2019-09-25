@@ -70,7 +70,7 @@ private:
 };
 
 template<typename T>
-T nothing(T const& start, T const& end, ratio_t ratio) {
+T delay_immediate(T const& start, T const& end, ratio_t ratio) {
     return start;
 }
 
@@ -93,44 +93,79 @@ struct Animated {
         , time{ 0 }
         , duration{ 0 } {}
 
+    template<typename...Args>
+    Animated(interpolation_t interpolation_function, Args&&... args) 
+        : end(std::forward<Args>(args)...)
+        , interp{ interpolation_function }
+        , time{ 0 }
+        , duration{ 0 } {}
+
     Animated& operator= (T value) {
         end = value;
         duration = 0;
         return *this;
     }
 
-    bool is_animated() const {
+    inline void abord_animation() {
+        end = start;
+        duration = 0;
+    }
+
+    inline void stop_animation() {
+        end = current();
+        duration = 0;
+    }
+
+    inline void end_animation() {
+        duration = 0;
+    }
+
+    inline time_t remaining() const {
+        return std::max(duration, 0.0f);
+    }
+
+    inline T get_target() const {
+        return end;
+    }
+
+    inline bool is_animated() const {
         return time < duration;
     }
 
-    void update(time_t dt) {
+    inline void update(time_t dt) {
         time += dt;
     }
 
-    T current() const {
+    inline T current() const {
         return is_animated() ? interp(start, end, time / duration) : end;
     }
 
-    explicit operator T() const {
+    inline operator T() const {
         return current();
     }
 
-    void animate(T final_position, time_t animation_duration, interpolation_t interpolation_function) {
-        interp = interpolation_function;
-
-        return animate(final_position, animation_duration);
+    inline void animate(T final_position, time_t animation_duration, interpolation_t interpolation_function) {
+        animate(final_position, animation_duration);
+        interp = std::move(interpolation_function);
     }
 
-    inline void animate(T final_position, time_t animation_duration) {
-        start = end;
-        end = final_position;
+    void animate(T final_position, time_t animation_duration) {
+        start = current();
+        end = std::move(final_position);
 
         time = 0;
         duration = animation_duration;
     }
 
-    void set_interpolation(interpolation_t interpolation_function) {
+    inline void set_interpolation(interpolation_t interpolation_function) {
+        start = current();
+        duration -= time;
+        time = 0;
         interp = interpolation_function;
+    }
+
+    inline interpolation_t const& get_interpolation() const {
+        return interp;
     }
 
 private:

@@ -19,7 +19,7 @@ Finally and not least, you can acquire a handler to the ressource with `sf::Ress
 Handlers returned by `sf::Ressource<T>::get` will increment the reference counter of the ressource, when it goes out of scope it decrement the counter, if it reach 0, the ressource is destroyed. 
 
 > *Note:*
-> if  sf::Ressource<T>` goes out of scope the underlying ressource is not clean up, it will wait that all handlers get destroyed.
+> if  sftk::Ressource<T>` goes out of scope the underlying ressource is not clean up, it will wait that all handlers get destroyed.
 
 > *Note:*
 > You can consult the handler's doc [here](https://en.cppreference.com/w/cpp/memory/shared_ptr)
