@@ -6,96 +6,135 @@
 #include <functional>
 
 namespace sftk {
+
+template<typename... Ts>
+class Listener;
+
 namespace details {
 
-template<typename is_zero, unsigned n, typename A, bool b, typename...Ts> 
-struct _select_invocable {
-    static constexpr bool value = false;
-};
+// select_invocable<Listener<...>, void, Event>
 
-template<unsigned n, typename A, typename T, typename...Ts> 
-struct _select_invocable<std::enable_if_t<n == 0>, n, A, true, T, Ts...> {
+template<typename L, typename, typename...Es> 
+struct select_invocable;
+
+// Recursive case, the top-most listener is not callable with the events
+template<typename T, typename...Ts, typename...Es> 
+struct select_invocable<
+    Listener<T, Ts...>, 
+    std::enable_if_t< ! std::is_invocable_v<T, sf::Window&, Es const&...>>, 
+    Es...> 
+: 
+    select_invocable<Listener<Ts...>, void, Es...> {};
+
+// Result, the tom-most listener is callable with the events
+template<typename T, typename...Ts, typename...Es> 
+struct select_invocable<
+    Listener<T, Ts...>, 
+    std::enable_if_t<std::is_invocable_v<T, sf::Window&, Es const&...>>, 
+    Es...
+> {
     static constexpr bool value = true;
     using type = T;
+    using next = Listener<Ts...>;
 };
 
-template<unsigned n, typename A, typename X, typename T, typename...Ts> 
-struct _select_invocable<std::enable_if_t<n != 0>, n, A, true, X, T, Ts...> 
-    : _select_invocable<void, n - 1, A, std::is_invocable_v<T, A>, T, Ts...> {};
-
-template<unsigned n, typename A, typename X, typename T, typename...Ts> 
-struct _select_invocable<void, n, A, false, X, T, Ts...> 
-    : _select_invocable<void, n, A, std::is_invocable_v<T, A>, T, Ts...> {};
-
-
-
-
-template<unsigned n, typename A, typename...Ts> 
-struct select_invocable {
+// Final case, no more listeners
+template<typename...Es> 
+struct select_invocable<
+    Listener<>, 
+    void, 
+    Es...
+> {
     static constexpr bool value = false;
 };
 
-template<unsigned n, typename A, typename T, typename...Ts> 
-struct select_invocable<n, A, T, Ts...> 
-    : _select_invocable<void, n, A, std::is_invocable_v<T, A>, T, Ts...> {};
-
-
-
-
-template<typename X, typename Event, unsigned n, typename... Ts>
-PropagateEvent call_listener(X& listener, Event const& t) {
-    using invocable = select_invocable<n, Event, Ts...>;
-    if constexpr (invocable::value) {
-        using T = typename invocable::type;
-        return std::invoke(static_cast<T&>(listener), t) && call_listener<X, Event, n + 1, Ts...>(listener, t);
-    } else
+template<typename CurrentListener, typename L, typename...Events>
+PropagateEvent call_listener_helper(L& listener, sf::Window& window, Events const&...events) {
+    using invokable = select_invocable<CurrentListener, void, Events...>;
+    if constexpr (invokable::value) {
+        using T = typename invokable::type;
+        using NextListener = typename invokable::next;
+        return std::invoke(static_cast<T&>(listener), window, events...) && call_listener_helper<NextListener>(listener, window, events...);
+    } else {
         return true;
+    }
+}
+
+template<typename L, typename...Events>
+PropagateEvent call_listener(L& listener, sf::Window& window, Events const&...events) {
+    return call_listener_helper<L>(listener, window, events...);
 }
 
 }
 
 
-
+struct close_tag_t{};
+struct lost_focus_tag_t{};
+struct gain_focus_tag_t{};
+struct pressed_tag_t{};
+struct release_tag_t{};
+struct mouse_left_tag_t{};
+struct mouse_entered_tag_t{};
+struct connect_tag_t{};
+struct disconnect_tag_t{};
+struct touch_began_tag_t{};
+struct touch_moved_tag_t{};
+struct touch_ended_tag_t{};
 
 template<typename... Ts>
 class Listener : public EventListener, private Ts... {
 
-    template<typename X, typename Event, unsigned n, typename... Rs>
-    friend PropagateEvent details::call_listener(X& listener, Event const& t);
+    template<typename CurrentListener, typename L, typename...Events>
+    friend PropagateEvent details::call_listener_helper(L& listener, sf::Window& window, Events const&...events);
 
 public:
 
     Listener(Ts... ts) : Ts(ts)... {}
 
-#define ON_(name, Event)\
-PropagateEvent on_ ## name (event::Event const& arg) override {\
-    return details::call_listener<Listener<Ts...>, event::Event, 0, Ts...>(*this, arg);\
-}
-
-    ON_(close, Closed)
-    ON_(resize, Resized)
-    ON_(lost_focus, LostFocus)
-    ON_(gain_focus, GainFocus)
-    ON_(text_entered, TextEntered)
-    ON_(key_pressed, KeyPressed)
-    ON_(key_released, KeyReleased)
-    ON_(mouse_wheel_scrolled, MouseWheelScrolled)
-    ON_(mouse_button_pressed, MouseButtonPressed)
-    ON_(mouse_button_released, MouseButtonReleased)
-    ON_(mouse_moved, MouseMoved)
-    ON_(mouse_entered, MouseEntered)
-    ON_(mouse_left, MouseLeft)
-    ON_(joystick_button_pressed, JoystickButtonPressed)
-    ON_(joystick_button_released, JoystickButtonReleased)
-    ON_(joystick_moved, JoystickMoved)
-    ON_(joystick_connected, JoystickConnected)
-    ON_(joystick_disconnected, JoystickDisconnected)
-    ON_(touch_began, TouchBegan)
-    ON_(touch_moved, TouchMoved)
-    ON_(touch_ended, TouchEnded)
-    ON_(sensor, SensorChanged)
-
-#undef ON_
+    PropagateEvent on_close                     (sf::Window& window                                               ) { 
+        return details::call_listener                (*this, window, close_tag_t{}); }
+    PropagateEvent on_resize                    (sf::Window& window, sf::Event::SizeEvent             const& event) {
+        return details::call_listener                (*this, window, event); }
+    PropagateEvent on_lost_focus                (sf::Window& window                                               ) { 
+        return details::call_listener                (*this, window, lost_focus_tag_t{}); }
+    PropagateEvent on_gain_focus                (sf::Window& window                                               ) { 
+        return details::call_listener                (*this, window, gain_focus_tag_t{}); }
+    PropagateEvent on_text_entered              (sf::Window& window, sf::Event::TextEvent             const& event) { 
+        return details::call_listener                (*this, window, event); }
+    PropagateEvent on_key_pressed               (sf::Window& window, sf::Event::KeyEvent              const& event) { 
+        return details::call_listener                (*this, window, event, pressed_tag_t{}); }
+    PropagateEvent on_key_released              (sf::Window& window, sf::Event::KeyEvent              const& event) { 
+        return details::call_listener                (*this, window, event, release_tag_t{}); }
+    PropagateEvent on_mouse_wheel_scrolled      (sf::Window& window, sf::Event::MouseWheelScrollEvent const& event) { 
+        return details::call_listener                (*this, window, event); }
+    PropagateEvent on_mouse_button_pressed      (sf::Window& window, sf::Event::MouseButtonEvent      const& event) { 
+        return details::call_listener                (*this, window, event, pressed_tag_t{}); }
+    PropagateEvent on_mouse_button_released     (sf::Window& window, sf::Event::MouseButtonEvent      const& event) { 
+        return details::call_listener                (*this, window, event, release_tag_t{}); }
+    PropagateEvent on_mouse_moved               (sf::Window& window, sf::Event::MouseMoveEvent        const& event) { 
+        return details::call_listener                (*this, window, event); }
+    PropagateEvent on_mouse_entered             (sf::Window& window                                               ) { 
+        return details::call_listener                (*this, window, mouse_entered_tag_t{}); }
+    PropagateEvent on_mouse_left                (sf::Window& window                                               ) { 
+        return details::call_listener                (*this, window, mouse_left_tag_t{}); }
+    PropagateEvent on_joystick_button_pressed   (sf::Window& window, sf::Event::JoystickButtonEvent   const& event) { 
+        return details::call_listener                (*this, window, event, pressed_tag_t{}); }
+    PropagateEvent on_joystick_button_released  (sf::Window& window, sf::Event::JoystickButtonEvent   const& event) { 
+        return details::call_listener                (*this, window, event, release_tag_t{}); }
+    PropagateEvent on_joystick_moved            (sf::Window& window, sf::Event::JoystickMoveEvent     const& event) { 
+        return details::call_listener                (*this, window, event); }
+    PropagateEvent on_joystick_connected        (sf::Window& window, sf::Event::JoystickConnectEvent  const& event) { 
+        return details::call_listener                (*this, window, event, connect_tag_t{}); }
+    PropagateEvent on_joystick_disconnected     (sf::Window& window, sf::Event::JoystickConnectEvent  const& event) { 
+        return details::call_listener                (*this, window, event, disconnect_tag_t{}); }
+    PropagateEvent on_touch_began               (sf::Window& window, sf::Event::TouchEvent            const& event) { 
+        return details::call_listener                (*this, window, event, touch_began_tag_t{}); }
+    PropagateEvent on_touch_moved               (sf::Window& window, sf::Event::TouchEvent            const& event) { 
+        return details::call_listener                (*this, window, event, touch_moved_tag_t{}); }
+    PropagateEvent on_touch_ended               (sf::Window& window, sf::Event::TouchEvent            const& event) { 
+        return details::call_listener                (*this, window, event, touch_ended_tag_t{}); }
+    PropagateEvent on_sensor                    (sf::Window& window, sf::Event::SensorEvent           const& event) { 
+        return details::call_listener                (*this, window, event); }
 
 };
 
