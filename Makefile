@@ -86,7 +86,7 @@ SRC_MAIN := main.cpp
 # [Event]
 #
 
-EVENT_SRC := sftk/eventListener/EventListener.cpp
+EVENT_SRC := 
 EVENT_MAIN := example/eventListener.cpp
 
 TARGET_EVENT_EXE :=$(BUILD_EXE_FOLDER)/eventListener_example.cpp
@@ -129,6 +129,22 @@ FANCY_TEXT_OBJ_MAIN := $(FANCY_TEXT_MAIN:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(
 FANCY_TEXT_OBJ_EXE := $(FANCY_TEXT_OBJ_MAIN) $(FANCY_TEXT_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o) 
 FANCY_TEXT_OBJ_SHARED := $(FANCY_TEXT_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FOLDER)/%.o)
 FANCY_TEXT_OBJ_STATIC := $(FANCY_TEXT_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
+
+#
+# [Animated]
+#
+
+ANIMATED_SRC := 
+ANIMATED_MAIN := example/animated.cpp
+
+TARGET_ANIMATED_EXE :=$(BUILD_EXE_FOLDER)/animated_example.cpp
+TARGET_ANIMATED_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkanimated.so
+TARGET_ANIMATED_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkanimated.a
+
+ANIMATED_OBJ_MAIN := $(ANIMATED_MAIN:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o)
+ANIMATED_OBJ_EXE := $(ANIMATED_OBJ_MAIN) $(ANIMATED_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o) 
+ANIMATED_OBJ_SHARED := $(ANIMATED_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FOLDER)/%.o)
+ANIMATED_OBJ_STATIC := $(ANIMATED_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
 
 #####
 ##### FLAGS
@@ -374,6 +390,24 @@ run-eventlistener:
 	@$(call _special,EXECUTING $(TARGET_EVENT_EXE)...)
 	@$(TARGET_EVENT_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
 
+animated:
+	@$(call _header,BUILDING ANIMATED LISTENER EXAMPLE...)
+	@make $(TARGET_ANIMATED_EXE)
+
+animated-shared:
+	@$(call _header,BUILDING SHARED ANIMATED LISTENER...)
+	@make $(TARGET_ANIMATED_SHARED)
+
+animated-static:
+	@$(call _header,BUILDING STATIC ANIMATED LISTENER...)
+	@make $(TARGET_ANIMATED_STATIC)
+
+run-animated: 
+	@make animated
+	@echo
+	@$(call _special,EXECUTING $(TARGET_ANIMATED_EXE)...)
+	@$(TARGET_ANIMATED_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
+
 ressource:
 	@$(call _header,BUILDING RESSOURCE LISTENER EXAMPLE...)
 	@make $(TARGET_RESSOURCE_EXE)
@@ -469,6 +503,23 @@ $(TARGET_EVENT_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(EVENT_OBJ_SHARED)
 	@$(call _sub-header,Shared library creation...)
 	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_EVENT_SHARED) $(EVENT_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
 	@$(call _header,Shared library done ($(TARGET_EVENT_SHARED)))
+
+
+
+$(TARGET_ANIMATED_EXE): $(_BUILD_DIR) $(LIB_TO_BUILD) $(ANIMATED_OBJ_EXE)
+	@$(call _sub-header,Linking...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) $(ANIMATED_OBJ_EXE) -o "$@" $(LIBS_PATH) $(LIBS)
+	@$(call _header,Executable done ($(ANIMATED_OBJ_EXE)))
+
+$(TARGET_ANIMATED_STATIC): $(_BUILD_DIR) $(LIB_TO_BUILD) $(ANIMATED_OBJ_STATIC)
+	@$(call _sub-header,Archiving...)
+	@$(SXX) $(STATIC_LINK_FLAG) $(TARGET_ANIMATED_STATIC) $(ANIMATED_OBJ_STATIC)
+	@$(call _header,Static library done ($(TARGET_ANIMATED_STATIC)))
+
+$(TARGET_ANIMATED_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(ANIMATED_OBJ_SHARED)
+	@$(call _sub-header,Shared library creation...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_ANIMATED_SHARED) $(ANIMATED_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
+	@$(call _header,Shared library done ($(TARGET_ANIMATED_SHARED)))
 
 
 

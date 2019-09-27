@@ -2,6 +2,7 @@
 
 This system is a simple one with objective to load and unload a ressource when needed.
 It has the advantage of reducing the memory used, but you don't control when the object get loaded which could happen in the middle of your application resulting in a "freeze".
+It is a header-only library.
 
 **Summary**
 - [Ressource](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Ressource/Ressource.md#ressource)

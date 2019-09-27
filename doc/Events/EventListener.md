@@ -1,7 +1,7 @@
 # Event Listener
 
 This system is design to dispath events to objects that need them. 
-It aims for simplicity and fast implementation.
+It aims for simplicity and fast implementation. It is a header-only library.
 
 **Summary**
 - [EventListener](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Events/EventListener.md#eventlistener)
