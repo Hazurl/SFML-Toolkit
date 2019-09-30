@@ -7,7 +7,7 @@ std::ostream& operator<<(std::ostream& os, sf::Time const& t) {
 }
 
 std::ostream& operator<<(std::ostream& os, sf::Color const& c) {
-    return os << "Color {" << c.r << ", " << c.g << ", " << c.b << "}";
+    return os << "Color {" << static_cast<unsigned>(c.r) << ", " << static_cast<unsigned>(c.g) << ", " << static_cast<unsigned>(c.b) << "}";
 }
 
 std::ostream& operator<<(std::ostream& os, sf::ContextSettings const& c) { 
