@@ -37,7 +37,7 @@ int main() {
             if (event.type == sf::Event::Closed)
                 window.close();
             else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                sf::Vector2f target{ static_cast<float>(event.mouseButton.x - radius), static_cast<float>(event.mouseButton.y  - radius) };
+                sf::Vector2f target{ static_cast<float>(event.mouseButton.x) - radius, static_cast<float>(event.mouseButton.y)  - radius };
 
                 linear_position.animate(target, 1);
                 bezier_position.animate(target, 1, /* Bezier anchors */{ initial_position });

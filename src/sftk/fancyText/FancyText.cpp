@@ -227,7 +227,7 @@ void TextBuilder::update_texture() {
 
 }
 
-void TextBuilder::set_font(sf::Font& font) { *this << font; }
+void TextBuilder::set_font(sf::Font& _font) { *this << _font; }
 sf::Font const& TextBuilder::get_font() const { return *font; }
 
 void TextBuilder::set_character_size(unsigned int size) { *this << txt::size(size); }

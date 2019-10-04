@@ -27,8 +27,8 @@ template<typename T>
 class Ressource {
 public:
 
-    Ressource(Loader<T> const& load_func)
-        : load_func(load_func) {}
+    Ressource(Loader<T> const& _load_func)
+        : load_func(_load_func) {}
     
     std::shared_ptr<T> get() {
         if (is_loaded())
@@ -37,7 +37,7 @@ public:
         std::shared_ptr<T> r = std::make_shared<T>();
         if (load_func(*r)) {
             res = r;
-            return std::move(r);
+            return r;
         }
 
         return nullptr;

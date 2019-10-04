@@ -166,7 +166,10 @@ PRINTER_OBJ_STATIC := $(PRINTER_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SR
 ##### FLAGS
 #####
 
-FLAGS := -std=c++17 -g3 -Wall -Wextra -Wno-pmf-conversions -O2
+OPTI := -g2
+FLAGS := -std=c++2a  $(OPTI) -pthread
+FLAGS += -Wall -Wextra -Wno-pmf-conversions -Wshadow -Wpedantic -Wduplicated-cond -Wduplicated-branches -Wlogical-op 
+FLAGS += -Wnull-dereference -Wuseless-cast -Wold-style-cast -Wcast-align -Wcast-qual -Wno-missing-field-initializers 
 STATIC_LINK_FLAG := rcs
 
 # Include path

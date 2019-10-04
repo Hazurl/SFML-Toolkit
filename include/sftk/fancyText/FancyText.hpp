@@ -55,7 +55,7 @@ sf::Text::Style styles(Ts... ts) {
     );
 }
 
-};
+}
 
 class TextBuilder {
 public:
