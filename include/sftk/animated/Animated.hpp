@@ -17,7 +17,10 @@ T linear(T const& start, T const& end, ratio_t ratio) {
 template<typename T, T middle>
 T quadratic(T const& start, T const& end, ratio_t ratio) {
     ratio_t opp = 1 - ratio;
-    return middle + (start - middle) * opp * opp + (end - middle) * ratio * ratio;
+    return 
+        opp*opp * start
+    +   2*opp*ratio * middle
+    +   ratio*ratio * end;
 }
 
 template<typename T, T anchorA, T anchorB>
