@@ -72,6 +72,8 @@ private:
     std::vector<T> anchors;
 };
 
+template<typename...Ts> Bezier(Ts...) -> Bezier<std::common_type_t<Ts...>>;
+
 template<typename T>
 T delay_immediate(T const& start, T const& end, ratio_t ratio) {
     return start;
