@@ -36,7 +36,7 @@ T cubic(T const& start, T const& end, ratio_t ratio) {
 template<typename T>
 struct Bezier {
     template<typename...Ts>
-    Bezier(Ts..._anchors) : anchors{ _anchors... } {}
+    explicit Bezier(Ts..._anchors) : anchors{ _anchors... } {}
 
     T operator()(T const& start, T const& end, ratio_t ratio) const {
         return interpolate(start, end, ratio, std::cbegin(anchors), std::cend(anchors));
