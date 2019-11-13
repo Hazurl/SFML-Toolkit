@@ -126,7 +126,7 @@ struct Animated {
     }
 
     inline time_t remaining() const {
-        return std::max(duration, 0.0f);
+        return std::max(duration - time, 0.0f);
     }
 
     inline T get_target() const {
