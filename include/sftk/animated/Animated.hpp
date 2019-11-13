@@ -93,13 +93,13 @@ struct Animated {
     using interpolation_t = Interpolation;
 
     template<typename...Args>
-    Animated(Args&&... args) 
+    explicit Animated(Args&&... args) 
         : end(std::forward<Args>(args)...)
         , time{ 0 }
         , duration{ 0 } {}
 
     template<typename...Args>
-    Animated(interpolation_t interpolation_function, Args&&... args) 
+    explicit Animated(interpolation_t interpolation_function, Args&&... args) 
         : end(std::forward<Args>(args)...)
         , interp{ interpolation_function }
         , time{ 0 }
