@@ -45,14 +45,18 @@ struct HSLColor {
 
 
 
-std::ostream& operator<<(std::ostream& os, HSLColor const& c);
+std::ostream& operator<<(std::ostream& os, HSLColor c);
 
 
 
 
-RGBColor to_rgb(HSLColor hsl) noexcept;
+RGBColor to_rgb(sf::Uint8 hue, sf::Uint8 saturation, sf::Uint8 luminosity, sf::Uint8 alpha = 255) noexcept;
 
 constexpr HSLColor to_hsl(sf::Uint8 red, sf::Uint8 green, sf::Uint8 blue, sf::Uint8 alpha = 255) noexcept;
+
+inline RGBColor to_rgb(HSLColor hsl) noexcept {
+    return to_rgb(hsl.h, hsl.s, hsl.l, hsl.a);
+}
 
 inline HSLColor to_hsl(RGBColor rgb) noexcept {
     return to_hsl(rgb.r, rgb.g, rgb.b, rgb.a);
