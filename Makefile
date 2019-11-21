@@ -147,6 +147,23 @@ ANIMATED_OBJ_SHARED := $(ANIMATED_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(
 ANIMATED_OBJ_STATIC := $(ANIMATED_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
 
 #
+# [HSL Color]
+#
+
+HSL_COLOR_SRC := sftk/hslcolor/HSLColor.cpp
+HSL_COLOR_MAIN := example/hslcolor.cpp
+HSL_COLOR_EXAMPLE_ADDITIONAL_SRC := sftk/print/Printer.cpp
+
+TARGET_HSL_COLOR_EXE :=$(BUILD_EXE_FOLDER)/hslcolor_example.cpp
+TARGET_HSL_COLOR_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkhslcolor.so
+TARGET_HSL_COLOR_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkhslcolor.a
+
+HSL_COLOR_OBJ_MAIN := $(HSL_COLOR_MAIN:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o)
+HSL_COLOR_OBJ_EXE := $(HSL_COLOR_OBJ_MAIN) $(HSL_COLOR_EXAMPLE_ADDITIONAL_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o) $(HSL_COLOR_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o) 
+HSL_COLOR_OBJ_SHARED := $(HSL_COLOR_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FOLDER)/%.o)
+HSL_COLOR_OBJ_STATIC := $(HSL_COLOR_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
+
+#
 # [Printer]
 #
 
@@ -463,6 +480,24 @@ run-fancytext:
 	@$(call _special,EXECUTING $(TARGET_FANCY_TEXT_EXE)...)
 	@$(TARGET_FANCY_TEXT_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
 
+hslcolor:
+	@$(call _header,BUILDING HSL COLOR EXAMPLE...)
+	@make $(TARGET_HSL_COLOR_EXE)
+
+hslcolor-shared:
+	@$(call _header,BUILDING SHARED HSL COLOR...)
+	@make $(TARGET_HSL_COLOR_SHARED)
+
+hslcolor-static:
+	@$(call _header,BUILDING STATIC HSL COLOR...)
+	@make $(TARGET_HSL_COLOR_STATIC)
+
+run-hslcolor: 
+	@make hslcolor
+	@echo
+	@$(call _special,EXECUTING $(TARGET_HSL_COLOR_EXE)...)
+	@$(TARGET_HSL_COLOR_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
+
 # printer:
 # 	@$(call _header,BUILDING PRINTER EXAMPLE...)
 # 	@make $(TARGET_PRINTER_EXE)
@@ -591,6 +626,23 @@ $(TARGET_FANCY_TEXT_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(FANCY_TEXT_OBJ_SHAR
 	@$(call _sub-header,Shared library creation...)
 	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_FANCY_TEXT_SHARED) $(FANCY_TEXT_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
 	@$(call _header,Shared library done ($(TARGET_FANCY_TEXT_SHARED)))
+
+
+
+$(TARGET_HSL_COLOR_EXE): $(_BUILD_DIR) $(LIB_TO_BUILD) $(HSL_COLOR_OBJ_EXE)
+	@$(call _sub-header,Linking...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) $(HSL_COLOR_OBJ_EXE) -o "$@" $(LIBS_PATH) $(LIBS)
+	@$(call _header,Executable done ($(HSL_COLOR_OBJ_EXE)))
+
+$(TARGET_HSL_COLOR_STATIC): $(_BUILD_DIR) $(LIB_TO_BUILD) $(HSL_COLOR_OBJ_STATIC)
+	@$(call _sub-header,Archiving...)
+	@$(SXX) $(STATIC_LINK_FLAG) $(TARGET_HSL_COLOR_STATIC) $(HSL_COLOR_OBJ_STATIC)
+	@$(call _header,Static library done ($(TARGET_HSL_COLOR_STATIC)))
+
+$(TARGET_HSL_COLOR_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(HSL_COLOR_OBJ_SHARED)
+	@$(call _sub-header,Shared library creation...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_HSL_COLOR_SHARED) $(HSL_COLOR_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
+	@$(call _header,Shared library done ($(TARGET_HSL_COLOR_SHARED)))
 
 
 
