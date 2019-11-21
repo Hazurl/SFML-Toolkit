@@ -166,7 +166,7 @@ PRINTER_OBJ_STATIC := $(PRINTER_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SR
 ##### FLAGS
 #####
 
-OPTI := -g2
+OPTI := -O2
 FLAGS := -std=c++2a  $(OPTI) -pthread
 FLAGS += -Wall -Wextra -Wno-pmf-conversions -Wshadow -Wpedantic -Wduplicated-cond -Wduplicated-branches -Wlogical-op 
 FLAGS += -Wnull-dereference -Wuseless-cast -Wold-style-cast -Wcast-align -Wcast-qual -Wno-missing-field-initializers 
@@ -608,6 +608,8 @@ $(TARGET_PRINTER_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(PRINTER_OBJ_SHARED)
 	@$(call _sub-header,Shared library creation...)
 	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_PRINTER_SHARED) $(PRINTER_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
 	@$(call _header,Shared library done ($(TARGET_PRINTER_SHARED)))
+
+
 
 # Just to avoid file without headers
 %$(EXT_INC_FILE):
