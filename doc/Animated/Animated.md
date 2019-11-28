@@ -37,7 +37,7 @@ Finally, one needs to call the function `update(time_t dt)` to continue the anim
 
 ### Constructors
 
-The class contains 2 constructors: `template<typename...Args> Animated(Args&&...args)` and `template<typename...Args> Animated(interpolation_t interpolation_function, Args&&...args)`. The `args` or passed to construct the value. And `interpolation_function` is the transformer. In the first constructor, the transformer is default constructed.
+The class contains 2 constructors: `template<typename...Args> Animated(std::in_place_t, Args&&...args)` and `template<typename...Args> Animated(interpolation_t interpolation_function, Args&&...args)`. The `args` or passed to construct the value. And `interpolation_function` is the transformer. In the first constructor, the transformer is default constructed.
 
 ## Interpolation
 
@@ -47,7 +47,7 @@ For ease of use, the namespace `sftk::interpolation` contains few tranformer:
 - `template<typename T> T linear(T const&, T const&, sftk::interpolation::ratio_t)`: Linear interpolation
 - `template<typename T, T anchor> T quadratic(T const&, T const&, sftk::interpolation::ratio_t)`: Quadratic interpolation in respect to `anchor`
 - `template<typename T, T anchorA, T anchorB> T linear(T const&, T const&, sftk::interpolation::ratio_t)`: Cubic interpolation in respect to both anchors
-- `template<typename T> struct Bezier`: Bezier curve (generalization of Linear, Quadratic and Cubic). The constructor takes an `std::initializer_list` of `T` as anchors.
+- `template<typename T> struct Bezier`: Bezier curve (generalization of Linear, Quadratic and Cubic). The constructor takes a `std::vector` of `T` to construct the anchors.
 
 All of them requires `T` to supports `operator+(T, T)` and `operator*(interpolation::ratio_t)`.
 
@@ -84,8 +84,8 @@ int main() {
     bezier_circle.setFillColor(sf::Color{ 0xF2, 0x50, 0x5D, 123 });
 
     sf::Vector2f const initial_position{ 400, 300 };
-    Animated<sf::Vector2f> linear_position(interpolation::linear<sf::Vector2f>, initial_position);
-    Animated<sf::Vector2f, interpolation::Bezier<sf::Vector2f>> bezier_position(initial_position);
+    Animated linear_position(interpolation::linear<sf::Vector2f>, initial_position);
+    Animated bezier_position(interpolation::Bezier<sf::Vector2f>{{ initial_position }}, sf::Vector2f{});
     linear_circle.setPosition(linear_position.current());
     bezier_circle.setPosition(bezier_position.current());
 
@@ -97,10 +97,10 @@ int main() {
             if (event.type == sf::Event::Closed)
                 window.close();
             else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                sf::Vector2f target{ static_cast<float>(event.mouseButton.x - radius), static_cast<float>(event.mouseButton.y  - radius) };
+                sf::Vector2f target{ static_cast<float>(event.mouseButton.x) - radius, static_cast<float>(event.mouseButton.y) - radius };
 
                 linear_position.animate(target, 1);
-                bezier_position.animate(target, 1, /* Bezier anchors */{ initial_position });
+                bezier_position.animate(target, 1, {{ initial_position }});
             }
         }
 
