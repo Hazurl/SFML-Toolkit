@@ -31,4 +31,70 @@ sf::Vector3<T2> cast(sf::Vector3<T1> const& v) {
     };
 } 
 
+template<typename T>
+inline sf::Vector2<T> get_position(sf::Rect<T> const& r) {
+    return {
+        r.left, 
+        r.top
+    };
+}
+
+template<typename T>
+inline sf::Vector2<T> get_size(sf::Rect<T> const& r) {
+    return {
+        r.width, 
+        r.height
+    };
+}
+
+inline sf::Vector2<unsigned int> get_size(sf::Event::SizeEvent const& s) {
+    return {
+        s.width, 
+        s.height
+    };
+}
+
+inline sf::Vector2<int> get_mouse(sf::Event::MouseMoveEvent const& m) {
+    return {
+        m.x, 
+        m.y
+    };
+}
+
+inline sf::Vector2<int> get_mouse(sf::Event::MouseButtonEvent const& m) {
+    return {
+        m.x, 
+        m.y
+    };
+}
+
+inline sf::Vector2<int> get_mouse(sf::Event::MouseWheelEvent const& m) {
+    return {
+        m.x, 
+        m.y
+    };
+}
+
+inline sf::Vector2<int> get_mouse(sf::Event::MouseWheelScrollEvent const& m) {
+    return {
+        m.x, 
+        m.y
+    };
+}
+
+inline sf::Vector2<int> get_touch(sf::Event::TouchEvent const& m) {
+    return {
+        m.x, 
+        m.y
+    };
+}
+
+inline sf::Vector3<float> get_sensor_axis(sf::Event::SensorEvent const& m) {
+    return {
+        m.x, 
+        m.y,
+        m.z
+    };
+}
+
 }
