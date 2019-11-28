@@ -5,7 +5,7 @@
 namespace sftk {
 
 template<typename T2, typename T1>
-sf::Vector2<T2> cast(sf::Vector2<T1> const& v) {
+inline sf::Vector2<T2> cast(sf::Vector2<T1> const& v) {
     return {
         static_cast<T2>(v.x),
         static_cast<T2>(v.y)
@@ -13,7 +13,7 @@ sf::Vector2<T2> cast(sf::Vector2<T1> const& v) {
 } 
 
 template<typename T2, typename T1>
-sf::Rect<T2> cast(sf::Rect<T1> const& r) {
+inline sf::Rect<T2> cast(sf::Rect<T1> const& r) {
     return {
         static_cast<T2>(r.left),
         static_cast<T2>(r.top),
@@ -23,7 +23,7 @@ sf::Rect<T2> cast(sf::Rect<T1> const& r) {
 } 
 
 template<typename T2, typename T1>
-sf::Vector3<T2> cast(sf::Vector3<T1> const& v) {
+inline sf::Vector3<T2> cast(sf::Vector3<T1> const& v) {
     return {
         static_cast<T2>(v.x),
         static_cast<T2>(v.y),
