@@ -35,8 +35,8 @@ T cubic(T const& start, T const& end, ratio_t ratio) {
 
 template<typename T>
 struct Bezier {
-    template<typename...Ts>
-    explicit Bezier(Ts..._anchors) : anchors{ _anchors... } {}
+
+    Bezier(std::vector<T> _anchors) : anchors{ std::move(_anchors) } {}
 
     T operator()(T const& start, T const& end, ratio_t ratio) const {
         return interpolate(start, end, ratio, std::cbegin(anchors), std::cend(anchors));
@@ -72,7 +72,7 @@ private:
     std::vector<T> anchors;
 };
 
-template<typename...Ts> Bezier(Ts...) -> Bezier<std::common_type_t<Ts...>>;
+template<typename T> Bezier(std::vector<T>) -> Bezier<T>;
 
 template<typename T>
 T delay_immediate(T const& start, T const& end, ratio_t ratio) {
@@ -93,7 +93,7 @@ struct Animated {
     using interpolation_t = Interpolation;
 
     template<typename...Args>
-    explicit Animated(Args&&... args) 
+    explicit Animated(std::in_place_t, Args&&... args) 
         : end(std::forward<Args>(args)...)
         , time{ 0 }
         , duration{ 0 } {}
@@ -182,5 +182,9 @@ private:
     time_t duration;
 
 };
+
+template<typename I, typename T> Animated(I&&, T&&) -> Animated<std::decay_t<T>, std::decay_t<I>>;
+template<typename I, typename T> Animated(std::in_place_t, T&&) -> Animated<std::decay_t<T>>;
+
 
 }
