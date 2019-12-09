@@ -11,7 +11,7 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Window");
 
     sf::Font font;
-    if (!font.loadFromFile("assets/font/neoletters.ttf")) {
+    if (!font.loadFromFile("/a/path/to/a/valid/font.ttf")) {
         return 1;
     }
 
