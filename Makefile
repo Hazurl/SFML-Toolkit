@@ -147,6 +147,22 @@ ANIMATED_OBJ_SHARED := $(ANIMATED_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(
 ANIMATED_OBJ_STATIC := $(ANIMATED_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
 
 #
+# [Gizmo]
+#
+
+GIZMO_SRC := 
+GIZMO_MAIN := example/gizmo.cpp
+
+TARGET_GIZMO_EXE :=$(BUILD_EXE_FOLDER)/gizmo_example.cpp
+TARGET_GIZMO_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkgizmo.so
+TARGET_GIZMO_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkgizmo.a
+
+GIZMO_OBJ_MAIN := $(GIZMO_MAIN:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o)
+GIZMO_OBJ_EXE := $(GIZMO_OBJ_MAIN) $(GIZMO_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o) 
+GIZMO_OBJ_SHARED := $(GIZMO_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FOLDER)/%.o)
+GIZMO_OBJ_STATIC := $(GIZMO_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
+
+#
 # [HSL Color]
 #
 
@@ -444,6 +460,24 @@ run-animated:
 	@$(call _special,EXECUTING $(TARGET_ANIMATED_EXE)...)
 	@$(TARGET_ANIMATED_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
 
+gizmo:
+	@$(call _header,BUILDING GIZMO LISTENER EXAMPLE...)
+	@make $(TARGET_GIZMO_EXE)
+
+gizmo-shared:
+	@$(call _header,BUILDING SHARED GIZMO LISTENER...)
+	@make $(TARGET_GIZMO_SHARED)
+
+gizmo-static:
+	@$(call _header,BUILDING STATIC GIZMO LISTENER...)
+	@make $(TARGET_GIZMO_STATIC)
+
+run-gizmo: 
+	@make gizmo
+	@echo
+	@$(call _special,EXECUTING $(TARGET_GIZMO_EXE)...)
+	@$(TARGET_GIZMO_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
+
 ressource:
 	@$(call _header,BUILDING RESSOURCE LISTENER EXAMPLE...)
 	@make $(TARGET_RESSOURCE_EXE)
@@ -592,6 +626,21 @@ $(TARGET_ANIMATED_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(ANIMATED_OBJ_SHARED)
 	@$(call _sub-header,Shared library creation...)
 	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_ANIMATED_SHARED) $(ANIMATED_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
 	@$(call _header,Shared library done ($(TARGET_ANIMATED_SHARED)))
+
+$(TARGET_GIZMO_EXE): $(_BUILD_DIR) $(LIB_TO_BUILD) $(GIZMO_OBJ_EXE)
+	@$(call _sub-header,Linking...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) $(GIZMO_OBJ_EXE) -o "$@" $(LIBS_PATH) $(LIBS)
+	@$(call _header,Executable done ($(GIZMO_OBJ_EXE)))
+
+$(TARGET_GIZMO_STATIC): $(_BUILD_DIR) $(LIB_TO_BUILD) $(GIZMO_OBJ_STATIC)
+	@$(call _sub-header,Archiving...)
+	@$(SXX) $(STATIC_LINK_FLAG) $(TARGET_GIZMO_STATIC) $(GIZMO_OBJ_STATIC)
+	@$(call _header,Static library done ($(TARGET_GIZMO_STATIC)))
+
+$(TARGET_GIZMO_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(GIZMO_OBJ_SHARED)
+	@$(call _sub-header,Shared library creation...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_GIZMO_SHARED) $(GIZMO_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
+	@$(call _header,Shared library done ($(TARGET_GIZMO_SHARED)))
 
 
 

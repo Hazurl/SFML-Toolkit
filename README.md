@@ -8,6 +8,7 @@ A collections of systems that will make your life easier when using SFML.
 - (Header only) Auto loading/unloading ressources : [Ressource](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Ressource/Ressource.md)
 - Generate text with multiple styles : [FancyText](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/FancyText/FancyText.md)
 - (Header only) Animate easily : [Animated](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Animated/Animated.md)
+- (Header only) Draw easily : [Gizmo](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Gizmo/Gizmo.md)
 
 ## Usage
 
@@ -22,5 +23,6 @@ You can replace `X` by:
 - `ressource`
 - `fancytext`
 - `animated`
+- `gizmo`
 
-> Animated, Event Listener and Ressource are header-only library
+> Animated, Gizmo, Event Listener and Ressource are header-only library
