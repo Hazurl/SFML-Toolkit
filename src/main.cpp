@@ -1,32 +1,58 @@
 #include <SFML/Graphics.hpp>
 
-// Define a global variable `gizmo`
 #define SFTK_GIZMO_GLOBAL_PROPERTIES
-
-// Makes sure to include the header *after* defining the macro (if you define it at all)
 #include <sftk/gizmo/Gizmo.hpp>
 
+#include <sftk/qol/QoL.hpp>
+#include <sftk/print/Printer.hpp>
+
+struct Clipping {
+    sf::RenderTarget& target;
+    sf::View old_view;
+
+    Clipping(sf::RenderTarget& target_, sf::FloatRect rect) : target(target_), old_view(target.getView()) {
+        auto old_size = old_view.getSize();
+        auto old_position = old_view.getCenter() - old_size / 2.f;
+
+        rect.left = std::max(rect.left, old_position.x);
+        rect.top = std::max(rect.top, old_position.y);
+
+        rect.width = std::min(rect.width, old_size.x);
+        rect.height = std::min(rect.height, old_size.y);
+
+        sf::View view(rect);
+        auto size = target.getSize();
+        view.setViewport(sf::FloatRect{
+            rect.left / size.x,
+            rect.top / size.y,
+            rect.width / size.x,
+            rect.height / size.y
+        });
+        target.setView(view);
+    }
+
+    ~Clipping() {
+        target.setView(old_view);
+    }
+};
+
+#define CONCAT_(a, b) a ## b
+#define CONCAT(a, b) CONCAT_(a, b)
+
+#define sftk_with_clip(...) for(struct{ bool flag; ::Clipping clipping; } CONCAT(_clipping_helper_, __LINE__) = { true, ::Clipping(__VA_ARGS__) }; CONCAT(_clipping_helper_, __LINE__).flag; CONCAT(_clipping_helper_, __LINE__).flag = false)
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Window");
 
-    sf::Font font;
-    if (!font.loadFromFile("assets/font/neoletters.ttf")) {
-        return 1;
-    }
+    sf::CircleShape c(50);
+    c.setPosition(100, 100);
 
-    // You can declare the properties like that
-    sftk::GizmoProperties my_gizmo;
-    my_gizmo
-        .set_target(window)
-        .set_color(sf::Color::Blue); // font can only be undefined if you never write text with these properties
+    sf::FloatRect rect{80, 110, 110, 80};
 
-    // If SFTK_GIZMO_GLOBAL_PROPERTIES is defined, you can use the global variable `sftk::gizmo` instead
-    sftk::gizmo
-        .set_target(window)
-        .set_color(sf::Color::Red)
-        .set_font(font)
-        .set_character_size(40);    
+    sftk::gizmo.set_target(window).set_draw_origin(false);
+
+    auto default_view = window.getView();
+    auto default_viewport = window.getViewport(default_view);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -37,22 +63,37 @@ int main() {
 
         window.clear();
 
-        // Methods can be chained
-        my_gizmo
-            .draw_arc({600, 500}, 40, 320, 260)
-            .set_color(sf::Color::Green)
-            .draw_closed_arc({600, 500}, 50, 300, 280)
-            .set_color(sf::Color::Blue);
+        {
+            Clipping clipping(window, {80, 110, 120, 50});
+            {
+                Clipping clipping(window, rect);
+                window.draw(c);
+            }
+        }
 
-        // You can call the methods with the global variable
-        sftk::gizmo.draw_text({ 10, 10 }, "You can\nwrite anything");
-        sftk::gizmo.draw_rect({ 400, 150, 180, 35 }, 10.f);
-        sftk::gizmo.draw_line({ 10, 250 }, { 200, 300 });
 
-        // Or use the methods directly
-        sftk::draw_arrow({ 10, 200 }, { 200, 400 });
-        sftk::draw_circle({ 400, 400 }, 50)
-            .draw_arc({ 600, 400 }, 50, 240, 30); // ... which can also be chained
+
+        sftk_with_clip(window, {80, 110, 120, 50}) {
+            sftk_with_clip(window, rect) {
+                window.draw(c); 
+            }
+        }
+/*
+        sf::View view(rect);
+        view.setViewport(sf::FloatRect{
+            rect.left / window.getSize().x,
+            rect.top / window.getSize().y,
+            rect.width / window.getSize().x,
+            rect.height / window.getSize().y
+        });
+
+        window.setView(view);
+        window.draw(c);
+        window.setView(default_view);
+*/
+        sftk::gizmo.set_color(sf::Color::Red).draw_rect(sftk::map_coords_to_pixel(window, rect)).set_color(sf::Color::Green);
+        sftk::gizmo.draw_rect(sftk::map_coords_to_pixel(window, sf::FloatRect{80, 110, 120, 50}));
+        sftk::gizmo.draw_circle(window.mapCoordsToPixel(c.getPosition() + sf::Vector2f{ c.getRadius(), c.getRadius() }), c.getRadius());
 
         window.display();
     }
