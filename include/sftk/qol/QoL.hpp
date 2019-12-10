@@ -97,4 +97,18 @@ inline sf::Vector3<float> get_sensor_axis(sf::Event::SensorEvent const& m) {
     };
 }
 
+inline sf::IntRect map_coords_to_pixel(sf::RenderTarget const& t, sf::FloatRect const& r) {
+    return {
+        t.mapCoordsToPixel(get_position(r)),
+        cast<int>(get_size(r))
+    };
+}
+
+inline sf::FloatRect map_pixel_to_coords(sf::RenderTarget const& t, sf::IntRect const& r) {
+    return {
+        t.mapPixelToCoords(get_position(r)),
+        cast<float>(get_size(r))
+    };
+}
+
 }
