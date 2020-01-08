@@ -1,7 +1,5 @@
 #include <sftk/clipper/Clipper.hpp>
 
-#include <sftk/qol/QoL.hpp>
-
 #include <cassert>
 
 namespace sftk {
@@ -22,7 +20,11 @@ void Clipper::add_clip(sf::FloatRect rect) {
 
     sf::View view(rect);
 
-    auto viemport_rect = cast<float>(map_coords_to_pixel(target, rect));
+    auto offset = target.mapCoordsToPixel({ rect.left, rect.top });
+    sf::Rect<float> viemport_rect{
+        static_cast<float>(offset.x), static_cast<float>(offset.y),
+        rect.width, rect.height
+    };
 
     auto size = target.getSize();
     view.setViewport(sf::FloatRect{
