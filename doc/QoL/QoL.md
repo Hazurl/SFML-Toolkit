@@ -4,9 +4,10 @@ This system provides some quality of life functions. Such as converting template
 All of the functions are inlined, thus the library is header-only.
 
 **Summary**
-- [HSL Color](#vector/rect-cast)
-- [Conversion](#extraction-from-sf::Rect)
-- [Note on constexpr](#extraction-from-events)
+- [Vector/Rect cast](#vectorrect-cast)
+- [Extraction from `sf::Rect`](#extraction-from-sfrect)
+- [Extraction from events](#extraction-from-events)
+- [Mapping sf::Rect's position](#mapping-sfrects-position)
 - [Example](#example)
 
 ## Vector/Rect cast
