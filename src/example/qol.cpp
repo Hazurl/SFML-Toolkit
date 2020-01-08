@@ -1,5 +1,9 @@
 #include <SFML/Graphics.hpp>
+
+#include <sftk/print/Printer.hpp>
 #include <sftk/qol/QoL.hpp>
+
+#include <iostream>
 
 int main() {
     sf::Vector2<float> vector2_float;

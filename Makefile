@@ -163,6 +163,22 @@ GIZMO_OBJ_SHARED := $(GIZMO_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FO
 GIZMO_OBJ_STATIC := $(GIZMO_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
 
 #
+# [QoL]
+#
+
+QOL_SRC := 
+QOL_MAIN := example/qol.cpp
+
+TARGET_QOL_EXE :=$(BUILD_EXE_FOLDER)/qol_example.cpp
+TARGET_QOL_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkqol.so
+TARGET_QOL_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkqol.a
+
+QOL_OBJ_MAIN := $(QOL_MAIN:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o)
+QOL_OBJ_EXE := $(QOL_OBJ_MAIN) $(QOL_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o) 
+QOL_OBJ_SHARED := $(QOL_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FOLDER)/%.o)
+QOL_OBJ_STATIC := $(QOL_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
+
+#
 # [HSL Color]
 #
 
@@ -478,6 +494,24 @@ run-gizmo:
 	@$(call _special,EXECUTING $(TARGET_GIZMO_EXE)...)
 	@$(TARGET_GIZMO_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
 
+qol:
+	@$(call _header,BUILDING QOL LISTENER EXAMPLE...)
+	@make $(TARGET_QOL_EXE)
+
+qol-shared:
+	@$(call _header,BUILDING SHARED QOL LISTENER...)
+	@make $(TARGET_QOL_SHARED)
+
+qol-static:
+	@$(call _header,BUILDING STATIC QOL LISTENER...)
+	@make $(TARGET_QOL_STATIC)
+
+run-qol: 
+	@make qol
+	@echo
+	@$(call _special,EXECUTING $(TARGET_QOL_EXE)...)
+	@$(TARGET_QOL_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
+
 ressource:
 	@$(call _header,BUILDING RESSOURCE LISTENER EXAMPLE...)
 	@make $(TARGET_RESSOURCE_EXE)
@@ -641,6 +675,23 @@ $(TARGET_GIZMO_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(GIZMO_OBJ_SHARED)
 	@$(call _sub-header,Shared library creation...)
 	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_GIZMO_SHARED) $(GIZMO_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
 	@$(call _header,Shared library done ($(TARGET_GIZMO_SHARED)))
+
+
+
+$(TARGET_QOL_EXE): $(_BUILD_DIR) $(LIB_TO_BUILD) $(QOL_OBJ_EXE)
+	@$(call _sub-header,Linking...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) $(QOL_OBJ_EXE) -o "$@" $(LIBS_PATH) $(LIBS)
+	@$(call _header,Executable done ($(QOL_OBJ_EXE)))
+
+$(TARGET_QOL_STATIC): $(_BUILD_DIR) $(LIB_TO_BUILD) $(QOL_OBJ_STATIC)
+	@$(call _sub-header,Archiving...)
+	@$(SXX) $(STATIC_LINK_FLAG) $(TARGET_QOL_STATIC) $(QOL_OBJ_STATIC)
+	@$(call _header,Static library done ($(TARGET_QOL_STATIC)))
+
+$(TARGET_QOL_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(QOL_OBJ_SHARED)
+	@$(call _sub-header,Shared library creation...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_QOL_SHARED) $(QOL_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
+	@$(call _header,Shared library done ($(TARGET_QOL_SHARED)))
 
 
 
