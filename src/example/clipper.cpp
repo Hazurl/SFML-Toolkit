@@ -1,12 +1,12 @@
 #include <SFML/Graphics.hpp>
-#include <sftk/qol/QoL.hpp>
 
+#include <sftk/clipper/Clipper.hpp>
+
+// You can ignore the next 50 lines
 #define SFTK_GIZMO_GLOBAL_PROPERTIES
 #include <sftk/gizmo/Gizmo.hpp>
 
 #include <sftk/qol/QoL.hpp>
-
-#include <sftk/clipper/Clipper.hpp>
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 800), "SFML Window");
@@ -48,29 +48,37 @@ int main() {
             }
         }
 
-    sf::Event::MouseButtonEvent button_event;
-    sf::Vector2<int> button_event_mouse = sftk::get_mouse(button_event);
+        window.clear();
 
+        // Create a scope to not affect the other draw call
         {
-            sftk::Clipper clipper(window);
+            sftk::Clipper clipper(window); // No-op
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-                clipper.add_clip(clip_wide);
+                // (1)
+                clipper.add_clip(clip_wide); // Make a horizontal clip
             }
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-                clipper.add_clip(clip_tall);
+                // (2)
+                clipper.add_clip(clip_tall); // Make a vertical clip
             }
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-                auto cl = sftk::make_clipper(window, clip_tall);
-                window.draw(c);
+                // (3)
+                auto cl = sftk::make_clipper(window, clip_tall); // Create and assign a vertical clip, added on top of `clipper`
+                window.draw(c); // Affected by `cl` and `clipper`
+
+                // End of scope, `cl` is destroyed, thus `clip_tall` is not bound anymore
             } else {
-                window.draw(c);
+                window.draw(c); // Affected by `clipper` 
             }
+
+            // End of scope, `clipper` is destroyed and the window's view is restored to its state at the start of the scope
         }
 
 
+        // Draw the clip bounds
         sftk::gizmo.set_color(sf::Color::Red).draw_rect(sftk::cast<int>(clip_tall)).set_color(sf::Color::Green);
         sftk::gizmo.draw_rect(sftk::cast<int>(clip_wide));
         sftk::gizmo.draw_circle(sftk::cast<int>(c.getPosition()), c.getRadius());

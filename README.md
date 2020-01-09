@@ -10,6 +10,7 @@ A collections of systems that will make your life easier when using SFML.
 - (Header only) Animate easily : [Animated](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Animated/Animated.md)
 - (Header only) Draw easily : [Gizmo](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Gizmo/Gizmo.md)
 - (Header only) Quality of life : [QoL](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/QoL/QoL.md)
+- Restrict draw area : [Clipper](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Clipper/Clipper.md)
 
 ## Usage
 
@@ -26,5 +27,6 @@ You can replace `X` by:
 - `animated`
 - `gizmo`
 - `qol`
+- `clipper`
 
 > Animated, QoL, Gizmo, Event Listener and Ressource are header-only library
