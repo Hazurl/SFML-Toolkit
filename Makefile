@@ -89,7 +89,7 @@ SRC_MAIN := main.cpp
 EVENT_SRC := 
 EVENT_MAIN := example/eventListener.cpp
 
-TARGET_EVENT_EXE :=$(BUILD_EXE_FOLDER)/eventListener_example.cpp
+TARGET_EVENT_EXE :=$(BUILD_EXE_FOLDER)/eventListener_example
 TARGET_EVENT_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkeventListener.so
 TARGET_EVENT_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkeventListener.a
 
@@ -105,7 +105,7 @@ EVENT_OBJ_STATIC := $(EVENT_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FO
 RESSOURCE_SRC := 
 RESSOURCE_MAIN := example/ressource.cpp
 
-TARGET_RESSOURCE_EXE :=$(BUILD_EXE_FOLDER)/ressource_example.cpp
+TARGET_RESSOURCE_EXE :=$(BUILD_EXE_FOLDER)/ressource_example
 TARGET_RESSOURCE_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkressource.so
 TARGET_RESSOURCE_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkressource.a
 
@@ -121,7 +121,7 @@ RESSOURCE_OBJ_STATIC := $(RESSOURCE_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/
 FANCY_TEXT_SRC := sftk/fancyText/FancyText.cpp
 FANCY_TEXT_MAIN := example/fancyText.cpp
 
-TARGET_FANCY_TEXT_EXE :=$(BUILD_EXE_FOLDER)/fancyText_example.cpp
+TARGET_FANCY_TEXT_EXE :=$(BUILD_EXE_FOLDER)/fancyText_example
 TARGET_FANCY_TEXT_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkfancyText.so
 TARGET_FANCY_TEXT_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkfancyText.a
 
@@ -131,13 +131,29 @@ FANCY_TEXT_OBJ_SHARED := $(FANCY_TEXT_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER
 FANCY_TEXT_OBJ_STATIC := $(FANCY_TEXT_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
 
 #
+# [Clipper]
+#
+
+CLIPPER_SRC := sftk/clipper/Clipper.cpp
+CLIPPER_MAIN := example/clipper.cpp
+
+TARGET_CLIPPER_EXE :=$(BUILD_EXE_FOLDER)/clipper_example
+TARGET_CLIPPER_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkclipper.so
+TARGET_CLIPPER_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkclipper.a
+
+CLIPPER_OBJ_MAIN := $(CLIPPER_MAIN:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o)
+CLIPPER_OBJ_EXE := $(CLIPPER_OBJ_MAIN) $(CLIPPER_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o) 
+CLIPPER_OBJ_SHARED := $(CLIPPER_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FOLDER)/%.o)
+CLIPPER_OBJ_STATIC := $(CLIPPER_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
+
+#
 # [Animated]
 #
 
 ANIMATED_SRC := 
 ANIMATED_MAIN := example/animated.cpp
 
-TARGET_ANIMATED_EXE :=$(BUILD_EXE_FOLDER)/animated_example.cpp
+TARGET_ANIMATED_EXE :=$(BUILD_EXE_FOLDER)/animated_example
 TARGET_ANIMATED_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkanimated.so
 TARGET_ANIMATED_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkanimated.a
 
@@ -153,7 +169,7 @@ ANIMATED_OBJ_STATIC := $(ANIMATED_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(
 GIZMO_SRC := 
 GIZMO_MAIN := example/gizmo.cpp
 
-TARGET_GIZMO_EXE :=$(BUILD_EXE_FOLDER)/gizmo_example.cpp
+TARGET_GIZMO_EXE :=$(BUILD_EXE_FOLDER)/gizmo_example
 TARGET_GIZMO_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkgizmo.so
 TARGET_GIZMO_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkgizmo.a
 
@@ -170,7 +186,7 @@ HSL_COLOR_SRC := sftk/hslcolor/HSLColor.cpp
 HSL_COLOR_MAIN := example/hslcolor.cpp
 HSL_COLOR_EXAMPLE_ADDITIONAL_SRC := sftk/print/Printer.cpp
 
-TARGET_HSL_COLOR_EXE :=$(BUILD_EXE_FOLDER)/hslcolor_example.cpp
+TARGET_HSL_COLOR_EXE :=$(BUILD_EXE_FOLDER)/hslcolor_example
 TARGET_HSL_COLOR_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkhslcolor.so
 TARGET_HSL_COLOR_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkhslcolor.a
 
@@ -186,7 +202,7 @@ HSL_COLOR_OBJ_STATIC := $(HSL_COLOR_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/
 PRINTER_SRC := sftk/print/Printer.cpp
 # PRINTER_MAIN := example/Printer.cpp
 
-# TARGET_PRINTER_EXE :=$(BUILD_EXE_FOLDER)/printer_example.cpp
+# TARGET_PRINTER_EXE :=$(BUILD_EXE_FOLDER)/printer_example
 TARGET_PRINTER_SHARED :=$(BUILD_SHARED_FOLDER)/libsftkprinter.so
 TARGET_PRINTER_STATIC :=$(BUILD_STATIC_FOLDER)/libsftkprinter.a
 
@@ -514,6 +530,24 @@ run-fancytext:
 	@$(call _special,EXECUTING $(TARGET_FANCY_TEXT_EXE)...)
 	@$(TARGET_FANCY_TEXT_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
 
+clipper:
+	@$(call _header,BUILDING CLIPPER EXAMPLE...)
+	@make $(TARGET_CLIPPER_EXE)
+
+clipper-shared:
+	@$(call _header,BUILDING SHARED CLIPPER...)
+	@make $(TARGET_CLIPPER_SHARED)
+
+clipper-static:
+	@$(call _header,BUILDING STATIC CLIPPER...)
+	@make $(TARGET_CLIPPER_STATIC)
+
+run-clipper: 
+	@make clipper
+	@echo
+	@$(call _special,EXECUTING $(TARGET_CLIPPER_EXE)...)
+	@$(TARGET_CLIPPER_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
+
 hslcolor:
 	@$(call _header,BUILDING HSL COLOR EXAMPLE...)
 	@make $(TARGET_HSL_COLOR_EXE)
@@ -675,6 +709,23 @@ $(TARGET_FANCY_TEXT_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(FANCY_TEXT_OBJ_SHAR
 	@$(call _sub-header,Shared library creation...)
 	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_FANCY_TEXT_SHARED) $(FANCY_TEXT_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
 	@$(call _header,Shared library done ($(TARGET_FANCY_TEXT_SHARED)))
+
+
+
+$(TARGET_CLIPPER_EXE): $(_BUILD_DIR) $(LIB_TO_BUILD) $(CLIPPER_OBJ_EXE)
+	@$(call _sub-header,Linking...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) $(CLIPPER_OBJ_EXE) -o "$@" $(LIBS_PATH) $(LIBS)
+	@$(call _header,Executable done ($(CLIPPER_OBJ_EXE)))
+
+$(TARGET_CLIPPER_STATIC): $(_BUILD_DIR) $(LIB_TO_BUILD) $(CLIPPER_OBJ_STATIC)
+	@$(call _sub-header,Archiving...)
+	@$(SXX) $(STATIC_LINK_FLAG) $(TARGET_CLIPPER_STATIC) $(CLIPPER_OBJ_STATIC)
+	@$(call _header,Static library done ($(TARGET_CLIPPER_STATIC)))
+
+$(TARGET_CLIPPER_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(CLIPPER_OBJ_SHARED)
+	@$(call _sub-header,Shared library creation...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_CLIPPER_SHARED) $(CLIPPER_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
+	@$(call _header,Shared library done ($(TARGET_CLIPPER_SHARED)))
 
 
 
