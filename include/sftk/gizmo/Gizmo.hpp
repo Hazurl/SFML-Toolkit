@@ -9,7 +9,6 @@
 #include <cmath>
 
 namespace sftk {
-void fun();
 
 namespace details {
 
