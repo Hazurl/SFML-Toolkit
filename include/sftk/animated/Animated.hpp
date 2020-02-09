@@ -10,12 +10,12 @@ namespace interpolation {
 using ratio_t = float;
 
 template<typename T>
-T linear(T const& start, T const& end, ratio_t ratio) {
+constexpr T linear(T const& start, T const& end, ratio_t ratio) noexcept {
     return start * (1 - ratio) + end * ratio;
 }
 
 template<typename T, T middle>
-T quadratic(T const& start, T const& end, ratio_t ratio) {
+constexpr T quadratic(T const& start, T const& end, ratio_t ratio) noexcept {
     ratio_t opp = 1 - ratio;
     return 
         opp*opp * start
@@ -24,7 +24,7 @@ T quadratic(T const& start, T const& end, ratio_t ratio) {
 }
 
 template<typename T, T anchorA, T anchorB>
-T cubic(T const& start, T const& end, ratio_t ratio) {
+constexpr T cubic(T const& start, T const& end, ratio_t ratio) noexcept {
     ratio_t opp = 1 - ratio;
     return 
         opp*opp*opp * start
@@ -38,13 +38,13 @@ struct Bezier {
 
     Bezier(std::vector<T> _anchors) : anchors{ std::move(_anchors) } {}
 
-    T operator()(T const& start, T const& end, ratio_t ratio) const {
+    T operator()(T const& start, T const& end, ratio_t ratio) const noexcept {
         return interpolate(start, end, ratio, std::cbegin(anchors), std::cend(anchors));
     }
 
 private:
 
-    static T interpolate(T const& start, T const& end, ratio_t ratio, typename std::vector<T>::const_iterator first, typename std::vector<T>::const_iterator last) {
+    static T interpolate(T const& start, T const& end, ratio_t ratio, typename std::vector<T>::const_iterator first, typename std::vector<T>::const_iterator last) noexcept {
         std::size_t size = last - first;        
         if (size == 0) {
             return linear(start, end, ratio);    
@@ -75,12 +75,12 @@ private:
 template<typename T> Bezier(std::vector<T>) -> Bezier<T>;
 
 template<typename T>
-T delay_immediate(T const& start, T const& end, ratio_t ratio) {
+constexpr T delay_immediate(T const& start, T const& end, ratio_t ratio) noexcept {
     return start;
 }
 
 template<typename T>
-T nearest(T const& start, T const& end, ratio_t ratio) {
+constexpr T nearest(T const& start, T const& end, ratio_t ratio) noexcept {
     return ratio > static_cast<ratio_t>(0.5) ? end : start;
 }
 
@@ -93,68 +93,68 @@ struct Animated {
     using interpolation_t = Interpolation;
 
     template<typename...Args>
-    explicit Animated(std::in_place_t, Args&&... args) 
+    explicit Animated(std::in_place_t, Args&&... args) noexcept
         : end(std::forward<Args>(args)...)
         , time{ 0 }
         , duration{ 0 } {}
 
     template<typename...Args>
-    explicit Animated(interpolation_t interpolation_function, Args&&... args) 
+    explicit Animated(interpolation_t interpolation_function, Args&&... args) noexcept
         : end(std::forward<Args>(args)...)
         , interp{ interpolation_function }
         , time{ 0 }
         , duration{ 0 } {}
 
-    Animated& operator= (T value) {
+    constexpr Animated& operator= (T value) noexcept {
         end = value;
         duration = 0;
         return *this;
     }
 
-    inline void abord_animation() {
+    constexpr void abord_animation() noexcept {
         end = start;
         duration = 0;
     }
 
-    inline void stop_animation() {
+    constexpr void stop_animation() noexcept {
         end = current();
         duration = 0;
     }
 
-    inline void end_animation() {
+    constexpr void end_animation() noexcept {
         duration = 0;
     }
 
-    inline time_t remaining() const {
+    constexpr time_t remaining() const noexcept {
         return std::max(duration - time, 0.0f);
     }
 
-    inline T get_target() const {
+    constexpr T get_target() const noexcept {
         return end;
     }
 
-    inline bool is_animated() const {
+    constexpr bool is_animated() const noexcept {
         return time < duration;
     }
 
-    inline void update(time_t dt) {
+    constexpr void update(time_t dt) noexcept {
         time += dt;
     }
 
-    inline T current() const {
+    constexpr T current() const noexcept {
         return is_animated() ? interp(start, end, time / duration) : end;
     }
 
-    inline operator T() const {
+    constexpr operator T() const noexcept {
         return current();
     }
 
-    inline void animate(T final_position, time_t animation_duration, interpolation_t interpolation_function) {
+    constexpr void animate(T final_position, time_t animation_duration, interpolation_t interpolation_function) noexcept {
         animate(final_position, animation_duration);
         interp = std::move(interpolation_function);
     }
 
-    void animate(T final_position, time_t animation_duration) {
+    constexpr void animate(T final_position, time_t animation_duration) noexcept {
         start = current();
         end = std::move(final_position);
 
@@ -162,14 +162,14 @@ struct Animated {
         duration = animation_duration;
     }
 
-    inline void set_interpolation(interpolation_t interpolation_function) {
+    constexpr void set_interpolation(interpolation_t interpolation_function) noexcept {
         start = current();
         duration -= time;
         time = 0;
         interp = interpolation_function;
     }
 
-    inline interpolation_t const& get_interpolation() const {
+    constexpr interpolation_t const& get_interpolation() const noexcept {
         return interp;
     }
 
