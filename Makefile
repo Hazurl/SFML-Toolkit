@@ -147,6 +147,22 @@ CLIPPER_OBJ_SHARED := $(CLIPPER_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SR
 CLIPPER_OBJ_STATIC := $(CLIPPER_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
 
 #
+# [Nine Slice]
+#
+
+NINE_SLICE_SRC := sftk/nineSlice/NineSlice.cpp
+NINE_SLICE_MAIN := example/nineSlice.cpp
+
+TARGET_NINE_SLICE_EXE :=$(BUILD_EXE_FOLDER)/nineSlice_example
+TARGET_NINE_SLICE_SHARED :=$(BUILD_SHARED_FOLDER)/libsftknineSlice.so
+TARGET_NINE_SLICE_STATIC :=$(BUILD_STATIC_FOLDER)/libsftknineSlice.a
+
+NINE_SLICE_OBJ_MAIN := $(NINE_SLICE_MAIN:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o)
+NINE_SLICE_OBJ_EXE := $(NINE_SLICE_OBJ_MAIN) $(NINE_SLICE_SRC:%$(EXT_SRC_FILE)=$(BUILD_EXE_FOLDER)/$(SRC_FOLDER)/%.o) 
+NINE_SLICE_OBJ_SHARED := $(NINE_SLICE_SRC:%$(EXT_SRC_FILE)=$(BUILD_SHARED_FOLDER)/$(SRC_FOLDER)/%.o)
+NINE_SLICE_OBJ_STATIC := $(NINE_SLICE_SRC:%$(EXT_SRC_FILE)=$(BUILD_STATIC_FOLDER)/$(SRC_FOLDER)/%.o)
+
+#
 # [Animated]
 #
 
@@ -582,6 +598,24 @@ run-clipper:
 	@$(call _special,EXECUTING $(TARGET_CLIPPER_EXE)...)
 	@$(TARGET_CLIPPER_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
 
+nineslice:
+	@$(call _header,BUILDING NINE_SLICE EXAMPLE...)
+	@make $(TARGET_NINE_SLICE_EXE)
+
+nineslice-shared:
+	@$(call _header,BUILDING SHARED NINE_SLICE...)
+	@make $(TARGET_NINE_SLICE_SHARED)
+
+nineslice-static:
+	@$(call _header,BUILDING STATIC NINE_SLICE...)
+	@make $(TARGET_NINE_SLICE_STATIC)
+
+run-nineslice: 
+	@make nineslice
+	@echo
+	@$(call _special,EXECUTING $(TARGET_NINE_SLICE_EXE)...)
+	@$(TARGET_NINE_SLICE_EXE) $(args); ERR=$$?; $(call _special,PROGRAM HALT WITH CODE $$ERR); exit $$ERR;
+
 hslcolor:
 	@$(call _header,BUILDING HSL COLOR EXAMPLE...)
 	@make $(TARGET_HSL_COLOR_EXE)
@@ -777,6 +811,23 @@ $(TARGET_CLIPPER_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(CLIPPER_OBJ_SHARED)
 	@$(call _sub-header,Shared library creation...)
 	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_CLIPPER_SHARED) $(CLIPPER_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
 	@$(call _header,Shared library done ($(TARGET_CLIPPER_SHARED)))
+
+
+
+$(TARGET_NINE_SLICE_EXE): $(_BUILD_DIR) $(LIB_TO_BUILD) $(NINE_SLICE_OBJ_EXE)
+	@$(call _sub-header,Linking...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) $(NINE_SLICE_OBJ_EXE) -o "$@" $(LIBS_PATH) $(LIBS)
+	@$(call _header,Executable done ($(NINE_SLICE_OBJ_EXE)))
+
+$(TARGET_NINE_SLICE_STATIC): $(_BUILD_DIR) $(LIB_TO_BUILD) $(NINE_SLICE_OBJ_STATIC)
+	@$(call _sub-header,Archiving...)
+	@$(SXX) $(STATIC_LINK_FLAG) $(TARGET_NINE_SLICE_STATIC) $(NINE_SLICE_OBJ_STATIC)
+	@$(call _header,Static library done ($(TARGET_NINE_SLICE_STATIC)))
+
+$(TARGET_NINE_SLICE_SHARED): $(_BUILD_DIR) $(LIB_TO_BUILD) $(NINE_SLICE_OBJ_SHARED)
+	@$(call _sub-header,Shared library creation...)
+	@$(CXX) $(INC_FLAG) $(FLAGS) -shared -o $(TARGET_NINE_SLICE_SHARED) $(NINE_SLICE_OBJ_SRC_SHARED) $(LIBS_PATH) $(LIBS)
+	@$(call _header,Shared library done ($(TARGET_NINE_SLICE_SHARED)))
 
 
 
