@@ -43,8 +43,9 @@ public:
 
     Padding get_padding() const noexcept;
     void set_padding(Padding padding_) noexcept;
-    sf::Texture const& getTexture() const noexcept;
-    void setTexture(sf::Texture const& texture_) noexcept;
+
+    sf::Texture const& get_texture() const noexcept;
+    void set_texture(sf::Texture const& texture_) noexcept;
 
     Strategy get_strategy() const noexcept;
     void set_strategy(Strategy strategy_) noexcept;

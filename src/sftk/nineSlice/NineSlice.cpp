@@ -111,11 +111,11 @@ void NineSlice::set_padding(Padding padding_) noexcept {
     }
 }
 
-sf::Texture const& NineSlice::getTexture() const noexcept {
+sf::Texture const& NineSlice::get_texture() const noexcept {
     return *texture;
 }
 
-void NineSlice::setTexture(sf::Texture const& texture_) noexcept {
+void NineSlice::set_texture(sf::Texture const& texture_) noexcept {
     if (texture->getSize() != texture_.getSize()) {
         texture = &texture_;
         re_compute_vertices(get_size());
