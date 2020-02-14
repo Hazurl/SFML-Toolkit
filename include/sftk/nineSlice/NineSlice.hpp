@@ -20,7 +20,7 @@ class NineSlice : public sf::Transformable, public sf::Drawable {
 public:
 
     enum class Strategy {
-        Clamp, Crop
+        Clamp, Crop, Deform
     };
 
 private:

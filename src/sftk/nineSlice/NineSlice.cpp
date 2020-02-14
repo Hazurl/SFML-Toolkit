@@ -13,10 +13,16 @@ std::pair<std::array<float, 4>, std::array<float, 4>> compute_tex_coords_and_pos
             { 0.f, left, size - right, size },
         };
     } else if (strategy == NineSlice::Strategy::Clamp) {
-        auto const clamped_size = std::max(size, left + right);
+        auto const clamped_size = left + right;
         return {
             { 0.f, left, texture_size - right, texture_size },
             { 0.f, left, clamped_size - right, clamped_size },
+        };
+    } else if (strategy == NineSlice::Strategy::Deform) {
+        auto const proportion = left / (left + right) * size;
+        return {
+            { 0.f, left, texture_size - right, texture_size },
+            { 0.f, proportion, proportion, size },
         };
     } else { // NineSlice::Strategy::Crop
         auto const proportion = left / (left + right) * size;

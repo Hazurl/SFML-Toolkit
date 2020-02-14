@@ -202,7 +202,7 @@ int main() {
             } else if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Space) {
                     gui_sprite.setStrategy(static_cast<MinSizeStrategy>((static_cast<int>(gui_sprite.getStrategy()) + 1) % 2));
-                    nine_slice.set_strategy(static_cast<sftk::NineSlice::Strategy>((static_cast<int>(nine_slice.get_strategy()) + 1) % 2));
+                    nine_slice.set_strategy(static_cast<sftk::NineSlice::Strategy>((static_cast<int>(nine_slice.get_strategy()) + 1) % 3));
                 }
             }
         }

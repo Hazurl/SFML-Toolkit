@@ -36,7 +36,7 @@ int main() {
             } else if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Space) {
                     // Change the strategy
-                    auto const next = static_cast<sftk::NineSlice::Strategy>((static_cast<int>(nine_slice.get_strategy()) + 1) % 2);
+                    auto const next = static_cast<sftk::NineSlice::Strategy>((static_cast<int>(nine_slice.get_strategy()) + 1) % 3);
                     nine_slice.set_strategy(next);
                 }
             }
