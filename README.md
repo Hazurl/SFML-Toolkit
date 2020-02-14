@@ -11,6 +11,7 @@ A collections of systems that will make your life easier when using SFML.
 - (Header only) Draw easily : [Gizmo](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Gizmo/Gizmo.md)
 - (Header only) Quality of life : [QoL](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/QoL/QoL.md)
 - Restrict draw area : [Clipper](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/Clipper/Clipper.md)
+- 9-slice scaling : [NineSlice](https://github.com/Hazurl/SFML-Toolkit/blob/master/doc/NineSlice/NineSlice.md)
 
 ## Usage
 
@@ -28,5 +29,6 @@ You can replace `X` by:
 - `gizmo`
 - `qol`
 - `clipper`
+- `nineslice`
 
 > Animated, QoL, Gizmo, Event Listener and Ressource are header-only library
