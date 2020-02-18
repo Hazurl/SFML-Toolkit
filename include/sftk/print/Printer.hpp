@@ -8,8 +8,12 @@ namespace sftk {
 std::ostream& operator<<(std::ostream& os, sf::Time const& t);
 
 std::ostream& operator<<(std::ostream& os, sf::Color const& c);
+std::ostream& operator<<(std::ostream& os, sf::Vertex const& vertex);
+std::ostream& operator<<(std::ostream& os, sf::VertexArray const& array);
+std::ostream& operator<<(std::ostream& os, sf::PrimitiveType typ);
 
 std::ostream& operator<<(std::ostream& os, sf::ContextSettings const& c);
+std::ostream& operator<<(std::ostream& os, sf::View const& view);
 
 std::ostream& operator<<(std::ostream& os, sf::Event const& e);
 std::ostream& operator<<(std::ostream& os, sf::Event::JoystickButtonEvent const& e);

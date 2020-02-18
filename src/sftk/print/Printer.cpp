@@ -10,6 +10,33 @@ std::ostream& operator<<(std::ostream& os, sf::Color const& c) {
     return os << "Color {" << static_cast<unsigned>(c.r) << ", " << static_cast<unsigned>(c.g) << ", " << static_cast<unsigned>(c.b) << ", " << static_cast<unsigned>(c.a) << "}";
 }
 
+std::ostream& operator<<(std::ostream& os, sf::Vertex const& vertex) {
+    return os << "Vertex {pos=" << vertex.position << ", color=" << vertex.color << ", uvs=" << vertex.texCoords << "}";
+}
+
+std::ostream& operator<<(std::ostream& os, sf::VertexArray const& array) {
+    bool f = true;
+    os << "VertexArray {type=" << array.getPrimitiveType() << ", ";
+    for(std::size_t i = 0; i < array.getVertexCount(); ++i) {
+        os << (f ? "" : ", ") << array[i];
+        f = false;
+    }
+    return os << "] }";
+}
+
+std::ostream& operator<<(std::ostream& os, sf::PrimitiveType type) {
+    switch(type) {
+        case sf::PrimitiveType::Points: return os << "Primitve Points";
+        case sf::PrimitiveType::Lines: return os << "Primitve Lines";
+        case sf::PrimitiveType::LineStrip: return os << "Primitve LineStrip";
+        case sf::PrimitiveType::Triangles: return os << "Primitve Triangles";
+        case sf::PrimitiveType::TriangleStrip: return os << "Primitve TriangleStrip";
+        case sf::PrimitiveType::TriangleFan: return os << "Primitve TriangleFan";
+        case sf::PrimitiveType::Quads: return os << "Primitve Quads";
+        default: return os << "Primitve Unknown";
+    }
+}
+
 std::ostream& operator<<(std::ostream& os, sf::ContextSettings const& c) { 
     return os << "Settings {v=" << c.majorVersion << "." << c.minorVersion << ", attrs=" << c.attributeFlags << ", rgb=" << std::boolalpha << c.sRgbCapable
               << ", " << c.depthBits << "/" << c.stencilBits << "/" << c.antialiasingLevel << "}";
