@@ -70,6 +70,9 @@ int main() {
         KeyPressedListener{ sf::Keyboard::Key::Num3 },
     };
 
+    // Controls
+    std::cout << "Press Space, Num0, 1, 2 or 3 to trigger an event\n";
+
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Window");
     while (window.isOpen()) {
         sf::Event event;

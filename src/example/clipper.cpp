@@ -36,6 +36,11 @@ int main() {
 
     sftk::gizmo.set_target(window).set_draw_origin(false);
 
+    // Controls
+    std::cout << "Press 'A' to create an horizontal clipper\n";
+    std::cout << "Press 'Z' or 'E' to create a vertical clipper\n";
+    std::cout << "Press Right to move the view 50 pixels horizontally\n";
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {

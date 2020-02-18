@@ -23,6 +23,9 @@ int main() {
     sftk::NineSlice nine_slice(gui_texture, padding, initial_size, initial_strategy);
     nine_slice.scale(10, 10); // Scale the whole texture
 
+    // Controls
+    std::cout << "Move the mouse to adjust the size of the rectangle\nPress Space to change the strategy (that is used when size is smaller than the padding)\n";
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {

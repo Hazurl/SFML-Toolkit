@@ -2,6 +2,8 @@
 
 #include <sftk/animated/Animated.hpp>
 
+#include <iostream>
+
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Window");
 
@@ -30,6 +32,10 @@ int main() {
     bezier_circle.setPosition(bezier_position.current());
 
     sf::Clock clock;
+
+    // Controls
+    std::cout << "Click in the windows to mvoe the balls to the mouse\n";
+    std::cout << "The blue ball move linearly and the red ball along a bezier curve with an anchor in the center of the window\n";
 
     while (window.isOpen()) {
         sf::Event event;
