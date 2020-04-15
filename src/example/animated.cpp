@@ -27,7 +27,7 @@ int main() {
 
 	sf::Vector2f const initial_position{ 400, 300 };
 	Animated linear_position(interpolation::linear<sf::Vector2f>, initial_position);
-	Animated bezier_position(interpolation::Bezier<sf::Vector2f>{ { initial_position } }, sf::Vector2f{});
+	Animated bezier_position(interpolation::Bezier<sf::Vector2f>({ initial_position }), sf::Vector2f{});
 	linear_circle.setPosition(linear_position.current());
 	bezier_circle.setPosition(bezier_position.current());
 
@@ -47,7 +47,7 @@ int main() {
 				sf::Vector2f target{ static_cast<float>(event.mouseButton.x) - radius, static_cast<float>(event.mouseButton.y) - radius };
 
 				linear_position.animate(target, 1);
-				bezier_position.animate(target, 1, { { initial_position } });
+				bezier_position.animate(target, 1, interpolation::Bezier<sf::Vector2f>({ initial_position }));
 			}
 		}
 

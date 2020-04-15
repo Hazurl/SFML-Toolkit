@@ -110,11 +110,17 @@ public:
 		, texture(&texture_)
 		, strategy(strategy_) {}
 
-	void setSize(sf::Vector2f const& size) { vertices = make_gui_rect(*texture, padding, size, strategy); }
+	void setSize(sf::Vector2f const& size) {
+		vertices = make_gui_rect(*texture, padding, size, strategy);
+	}
 
-	sf::Vector2f getSize() const { return vertices.back().position; }
+	sf::Vector2f getSize() const {
+		return vertices.back().position;
+	}
 
-	Padding getPadding() const { return padding; }
+	Padding getPadding() const {
+		return padding;
+	}
 
 	void setPadding(Padding padding_) {
 		if (padding != padding_) {
@@ -123,7 +129,9 @@ public:
 		}
 	}
 
-	sf::Texture const& getTexture() const { return *texture; }
+	sf::Texture const& getTexture() const {
+		return *texture;
+	}
 
 	void setTexture(sf::Texture const& texture_) {
 		if (texture->getSize() != texture_.getSize()) {
@@ -132,7 +140,9 @@ public:
 		texture = &texture_;
 	}
 
-	MinSizeStrategy getStrategy() const { return strategy; }
+	MinSizeStrategy getStrategy() const {
+		return strategy;
+	}
 
 	void setStrategy(MinSizeStrategy strategy_) {
 		if (strategy_ != strategy) {

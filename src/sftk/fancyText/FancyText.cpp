@@ -92,7 +92,10 @@ sf::FloatRect FancyText::get_global_bounds() const {
 
 void FancyText::finish_builder(TextBuilder const& builder) {
 	// TODO: regroup vertices with the same texture so the minimal amount of draw call are necessary
-	for (auto const& history : builder.character_size_history) { textures.emplace_back(history.texture, history.character_position); }
+	std::transform(
+		std::begin(builder.character_size_history), std::end(builder.character_size_history), std::back_inserter(textures), [](auto const& history) {
+			return std::pair{ history.texture, history.character_position };
+		});
 
 	auto max_line_spacing_since_start_of_line =
 		std::max(builder.max_line_spacing_since_start_of_line, builder.font->getLineSpacing(builder.character_size));
@@ -211,10 +214,10 @@ outline_thickness_t outline_thickness(float _thickness) {
 
 } // namespace txt
 
-TextBuilder::TextBuilder(sf::Font const& _font)
-	: font{ &_font }
-	, underline_offset{ font->getUnderlinePosition(character_size) }
-	, line_thickness{ font->getUnderlineThickness(character_size) }
+TextBuilder::TextBuilder(sf::Font const& font_)
+	: font{ &font_ }
+	, underline_offset{ font_.getUnderlinePosition(character_size) }
+	, line_thickness{ font_.getUnderlineThickness(character_size) }
 	, vertices{ sf::PrimitiveType::Triangles } {
 	update_whitespace_width();
 	update_strikethrough_offset();
@@ -272,8 +275,8 @@ void TextBuilder::update_texture() {
 	}
 }
 
-void TextBuilder::set_font(sf::Font& _font) {
-	*this << _font;
+void TextBuilder::set_font(sf::Font const& font_) {
+	*this << font_;
 }
 sf::Font const& TextBuilder::get_font() const {
 	return *font;
@@ -338,8 +341,8 @@ sf::Vector2f TextBuilder::get_current_position() const {
 	return { x, y + current_max_line_spacing_since_start_of_line_multiplied };
 }
 
-TextBuilder& operator<<(TextBuilder& builder, sf::Font& _font) {
-	if (builder.font == &_font) {
+TextBuilder& operator<<(TextBuilder& builder, sf::Font const& font) {
+	if (builder.font == &font) {
 		return builder;
 	}
 
@@ -356,7 +359,7 @@ TextBuilder& operator<<(TextBuilder& builder, sf::Font& _font) {
 	}
 
 
-	builder.font = &_font;
+	builder.font = &font;
 
 	builder.update_texture();
 	builder.update_underline_offset();
@@ -367,8 +370,8 @@ TextBuilder& operator<<(TextBuilder& builder, sf::Font& _font) {
 	return builder;
 }
 
-TextBuilder& operator<<(TextBuilder& builder, txt::size_t _character_size) {
-	if (builder.character_size == _character_size.size)
+TextBuilder& operator<<(TextBuilder& builder, txt::size_t character_size) {
+	if (builder.character_size == character_size.size)
 		return builder;
 
 	// If we're using the underlined style, add the last line
@@ -383,7 +386,7 @@ TextBuilder& operator<<(TextBuilder& builder, txt::size_t _character_size) {
 		builder.striketrough_start = builder.x;
 	}
 
-	builder.character_size = _character_size.size;
+	builder.character_size = character_size.size;
 	builder.update_underline_offset();
 	builder.update_line_thickness();
 	builder.update_whitespace_width();
@@ -393,20 +396,20 @@ TextBuilder& operator<<(TextBuilder& builder, txt::size_t _character_size) {
 	return builder;
 }
 
-TextBuilder& operator<<(TextBuilder& builder, txt::spacing_t _spacing) {
-	builder.letter_spacing_factor = _spacing.factor;
+TextBuilder& operator<<(TextBuilder& builder, txt::spacing_t spacing) {
+	builder.letter_spacing_factor = spacing.factor;
 	builder.update_letter_spacing();
 	return builder;
 }
 
-TextBuilder& operator<<(TextBuilder& builder, txt::line_spacing_t _line_spacing) {
-	builder.line_spacing_factor								= _line_spacing.factor;
+TextBuilder& operator<<(TextBuilder& builder, txt::line_spacing_t line_spacing) {
+	builder.line_spacing_factor								= line_spacing.factor;
 	builder.max_line_spacing_since_start_of_line_multiplied = builder.max_line_spacing_since_start_of_line * builder.line_spacing_factor;
 	return builder;
 }
 
-TextBuilder& operator<<(TextBuilder& builder, sf::Color _color) {
-	if (builder.fill_color == _color) {
+TextBuilder& operator<<(TextBuilder& builder, sf::Color color) {
+	if (builder.fill_color == color) {
 		return builder;
 	}
 
@@ -420,12 +423,12 @@ TextBuilder& operator<<(TextBuilder& builder, sf::Color _color) {
 		builder.striketrough_start = builder.x;
 	}
 
-	builder.fill_color = _color;
+	builder.fill_color = color;
 	return builder;
 }
 
-TextBuilder& operator<<(TextBuilder& builder, txt::outline_color_t _outline_color) {
-	if (builder.outline_color == _outline_color.color) {
+TextBuilder& operator<<(TextBuilder& builder, txt::outline_color_t outline_color) {
+	if (builder.outline_color == outline_color.color) {
 		return builder;
 	}
 
@@ -441,13 +444,13 @@ TextBuilder& operator<<(TextBuilder& builder, txt::outline_color_t _outline_colo
 		}
 	}
 
-	builder.outline_color = _outline_color.color;
+	builder.outline_color = outline_color.color;
 
 	return builder;
 }
 
-TextBuilder& operator<<(TextBuilder& builder, txt::outline_thickness_t _outline_thickness) {
-	if (builder.outline_thickness == _outline_thickness.thickness) {
+TextBuilder& operator<<(TextBuilder& builder, txt::outline_thickness_t outline_thickness) {
+	if (builder.outline_thickness == outline_thickness.thickness) {
 		return builder;
 	}
 
@@ -461,35 +464,35 @@ TextBuilder& operator<<(TextBuilder& builder, txt::outline_thickness_t _outline_
 		builder.striketrough_start = builder.x;
 	}
 
-	builder.outline_thickness = _outline_thickness.thickness;
+	builder.outline_thickness = outline_thickness.thickness;
 
 	builder.update_whitespace_width();
 	builder.update_letter_spacing();
 	return builder;
 }
 
-TextBuilder& operator<<(TextBuilder& builder, sf::Text::Style _style) {
-	builder.shear = _style & sf::Text::Italic ? TextBuilder::SHEAR_ANGLE : 0.0f;
+TextBuilder& operator<<(TextBuilder& builder, sf::Text::Style style) {
+	builder.shear = (style & sf::Text::Italic) ? TextBuilder::SHEAR_ANGLE : 0.0f;
 
-	if (builder.is_underlined != (_style & sf::Text::Underlined)) {
+	if (builder.is_underlined != (style & sf::Text::Underlined)) {
 		if (builder.is_underlined) {
 			builder.force_add_underline();
 		} else {
 			builder.underline_start = builder.x;
 		}
-		builder.is_underlined = _style & sf::Text::Underlined;
+		builder.is_underlined = style & sf::Text::Underlined;
 	}
 
-	if (builder.is_striketrough != (_style & sf::Text::StrikeThrough) || (builder.is_bold != (_style & sf::Text::Bold) && builder.is_striketrough)) {
+	if (builder.is_striketrough != (style & sf::Text::StrikeThrough) || (builder.is_bold != (style & sf::Text::Bold) && builder.is_striketrough)) {
 		if (builder.is_striketrough) {
 			builder.force_add_striketrough();
 		}
 		builder.striketrough_start = builder.x;
-		builder.is_striketrough	   = _style & sf::Text::StrikeThrough;
+		builder.is_striketrough	   = style & sf::Text::StrikeThrough;
 	}
 
-	if (builder.is_bold != (_style & sf::Text::Bold)) {
-		builder.is_bold = _style & sf::Text::Bold;
+	if (builder.is_bold != (style & sf::Text::Bold)) {
+		builder.is_bold = style & sf::Text::Bold;
 
 		builder.update_whitespace_width();
 		builder.update_strikethrough_offset();

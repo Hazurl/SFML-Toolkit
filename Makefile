@@ -348,6 +348,8 @@ _SRC_MAINS := $(addprefix $(SRC_FOLDER)/,$(SRC_MAINS))
 _ALL_SRC_FILES := $(shell find $(SRC_FOLDER) -name '*$(EXT_SRC_FILE)')
 _SRC_FILES := $(filter-out $(_SRC_MAINS),$(_ALL_SRC_FILES))
 
+_FILES_TO_FORMAT := $(shell find $(SRC_FOLDER) $(INC_FOLDER) -name '*$(EXT_SRC_FILE)' -or -name '*$(EXT_INC_FILE)')
+
 #####
 ##### DIRECTORIES
 #####
@@ -439,16 +441,17 @@ where-static:
 
 checks:
 	@$(call _special,RUNNING CPP-CHECK)
-	@cppcheck --inconclusive --enable=all -I include src | \
-	 sed   "s/^.*style.*)/\o033[36m&\o033[0m/g;\
-		 	s/^.*note.*)/\o033[36m&\o033[0m/g;\
-		 	s/^.*performance.*)/\o033[35m&\o033[0m/g;\
-		 	s/^.*error.*)/\o033[31m&\o033[0m/g;\
-		 	s/^.*warning.*)/\o033[33m&\o033[0m/g;\
+	@cppcheck --inconclusive --enable=all -I include src 2>&1 | \
+	 sed   "s/^.*style.*/\o033[36m&\o033[0m/g;\
+		 	s/^.*note.*/\o033[36m&\o033[0m/g;\
+		 	s/^.*performance.*/\o033[35m&\o033[0m/g;\
+		 	s/^.*error.*/\o033[31m&\o033[0m/g;\
+		 	s/^.*warning.*/\o033[33m&\o033[0m/g;\
 		 	s/^[0-9].*/\o033[1m&\o033[0m/g"
 
 format: .clang-format
-	@$(call _special,RUNNING CLANG-FORMAT)
+	@$(call _special,RUNNING CLANG-FORMAT ON)
+	@echo $(if $(file),$(file),$(_FILES_TO_FORMAT)) | tr " " "\n"
 	@clang-format --style=file -i $(if $(file),$(file),$(_SRC_FILES) $(_SRC_MAINS) $(_HEADER_FILES))
 
 re:

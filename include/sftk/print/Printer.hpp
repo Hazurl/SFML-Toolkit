@@ -10,7 +10,7 @@ std::ostream& operator<<(std::ostream& os, sf::Time const& t);
 std::ostream& operator<<(std::ostream& os, sf::Color const& c);
 std::ostream& operator<<(std::ostream& os, sf::Vertex const& vertex);
 std::ostream& operator<<(std::ostream& os, sf::VertexArray const& array);
-std::ostream& operator<<(std::ostream& os, sf::PrimitiveType typ);
+std::ostream& operator<<(std::ostream& os, sf::PrimitiveType type);
 
 std::ostream& operator<<(std::ostream& os, sf::ContextSettings const& c);
 std::ostream& operator<<(std::ostream& os, sf::View const& view);
@@ -38,17 +38,17 @@ std::ostream& operator<<(std::ostream& os, sf::Font::Info const& f);
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, sf::Vector2<T> const& v) {
-    return os << '(' << v.x << ", " << v.y << ')';
+	return os << '(' << v.x << ", " << v.y << ')';
 }
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, sf::Vector3<T> const& v) {
-    return os << '(' << v.x << ", " << v.y << ", " << v.z << ')';
+	return os << '(' << v.x << ", " << v.y << ", " << v.z << ')';
 }
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, sf::Rect<T> const& r) {
-    return os << '(' << r.left << ", " << r.top << " ~ " << r.width << ", " << r.height << ')';
+	return os << '(' << r.left << ", " << r.top << " ~ " << r.width << ", " << r.height << ')';
 }
 
-}
+} // namespace sftk

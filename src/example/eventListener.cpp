@@ -7,7 +7,7 @@
 #include <vector>
 
 struct KeyPressedListener : sftk::EventListener {
-	KeyPressedListener(sf::Keyboard::Key k) : key_to_react_to(k) {}
+	explicit KeyPressedListener(sf::Keyboard::Key k) : key_to_react_to(k) {}
 
 	sf::Keyboard::Key key_to_react_to;
 
