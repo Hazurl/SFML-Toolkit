@@ -385,6 +385,7 @@ export LD_LIBRARY_PATH += $(_LIB_PATH_LD)
 .PHONY: clean clean-executable clean-shared clean-static
 .PHONY: re re-executable re-shared re-static
 .PHONY: re-run run
+.PHONY: checks format
 
 .DEFAULT_GOAL := all
 
@@ -435,6 +436,20 @@ where-shared:
 
 where-static:
 	@echo $(TARGET_STATIC)
+
+checks:
+	@$(call _special,RUNNING CPP-CHECK)
+	@cppcheck --inconclusive --enable=all -I include src | \
+	 sed   "s/^.*style.*)/\o033[36m&\o033[0m/g;\
+		 	s/^.*note.*)/\o033[36m&\o033[0m/g;\
+		 	s/^.*performance.*)/\o033[35m&\o033[0m/g;\
+		 	s/^.*error.*)/\o033[31m&\o033[0m/g;\
+		 	s/^.*warning.*)/\o033[33m&\o033[0m/g;\
+		 	s/^[0-9].*/\o033[1m&\o033[0m/g"
+
+format: .clang-format
+	@$(call _special,RUNNING CLANG-FORMAT)
+	@clang-format --style=file -i $(if $(file),$(file),$(_SRC_FILES) $(_SRC_MAINS) $(_HEADER_FILES))
 
 re:
 	@make clean
