@@ -6,7 +6,15 @@ namespace sftk {
 
 Clipper::Clipper(sf::RenderTarget& target_) : target(target_), old_view(target.getView()) {}
 
-void Clipper::add_clip(sf::FloatRect rect) {
+Clipper::Clipper(sf::RenderTarget& target_, sf::FloatRect const& rect) : Clipper(target) {
+	add_clip(rect);
+}
+
+Clipper::~Clipper() {
+	target.setView(old_view);
+}
+
+void Clipper::add_clip(sf::FloatRect const& rect) {
 	auto current_view = target.getView();
 
 	auto current_size	  = current_view.getSize();
@@ -28,16 +36,6 @@ void Clipper::add_clip(sf::FloatRect rect) {
 		sf::FloatRect{ viemport_rect.left / size.x, viemport_rect.top / size.y, viemport_rect.width / size.x, viemport_rect.height / size.y });
 
 	target.setView(view);
-}
-
-void Clipper::restore() {
-	target.setView(old_view);
-}
-
-Clipper make_clipper(sf::RenderTarget& target_, sf::FloatRect rect) {
-	Clipper c(target_);
-	c.add_clip(rect);
-	return c;
 }
 
 } // namespace sftk

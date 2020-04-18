@@ -65,8 +65,8 @@ int main() {
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
 				// (3)
-				auto cl = sftk::make_clipper(window, clip_tall); // Create and assign a vertical clip, added on top of `clipper`
-				window.draw(c);									 // Affected by `cl` and `clipper`
+				sftk::Clipper cl(window, clip_tall); // Create and assign a vertical clip, added on top of `clipper`
+				window.draw(c);						 // Affected by `cl` and `clipper`
 
 				// End of scope, `cl` is destroyed, thus `clip_tall` is not bound anymore
 			} else {

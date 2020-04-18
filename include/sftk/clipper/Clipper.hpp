@@ -6,20 +6,20 @@ namespace sftk {
 
 class Clipper {
 public:
-    explicit Clipper(sf::RenderTarget& target_);
-    inline ~Clipper() {
-        restore();
-    }
+	explicit Clipper(sf::RenderTarget& target_);
+	explicit Clipper(sf::RenderTarget& target_, sf::FloatRect const& rect);
+	~Clipper();
 
-    void add_clip(sf::FloatRect rect);
-    void restore();
+	Clipper(Clipper const&) = delete;
+	Clipper(Clipper&&)		= delete;
+	Clipper& operator=(Clipper const&) = delete;
+	Clipper& operator=(Clipper&&) = delete;
+
+	void add_clip(sf::FloatRect const& rect);
 
 private:
-
-    sf::RenderTarget& target;
-    sf::View old_view;
+	sf::RenderTarget& target;
+	sf::View old_view;
 };
 
-Clipper make_clipper(sf::RenderTarget& target_, sf::FloatRect rect);
-
-}
+} // namespace sftk
